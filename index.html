@@ -6,8 +6,11 @@
 <title>Platinum Briefs Manager</title>
 <meta name="theme-color" content="#2D4226">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🐾%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root { color-scheme: light; --green: #2D4226; --green-soft: #5C7A4F; --bg: #FAFAF7; --card: #fff; --border: #ECEAE3; --text: #1B2B1A; }
+:root { color-scheme: light; --green: #2D4226; --green-soft: #5C7A4F; --cream: #F5EFE6; --bg: #FAFAF7; --card: #fff; --border: #ECEAE3; --text: #1B2B1A; }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Sukhumvit Set", "Noto Sans Thai", sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
 .container { max-width: 1200px; margin: 0 auto; padding: 12px; padding-bottom: env(safe-area-inset-bottom); }
@@ -50,18 +53,49 @@ header { background: var(--green); color: #fff; padding: 16px; margin: -12px -12
 .btn-secondary { background: #F5F8F2; color: var(--green); border-color: #D6E0CB; }
 .btn-secondary:active { background: #E8F1DB; transform: scale(0.98); }
 .btn-full { grid-column: 1 / -1; }
+.btn-compose { background: var(--cream); color: var(--green); border-color: #E5DCC8; grid-column: 1 / -1; }
+.btn-compose:active { background: #ECE2CB; transform: scale(0.98); }
 .btn-publish { background: #FFF3E0; color: #E65100; border-color: #FFE0B2; grid-column: 1 / -1; }
 .btn-publish:active { transform: scale(0.98); }
 .card.published .btn-publish { background: #E8F5E9; color: #1B5E20; border-color: #C8E6C9; }
 .empty, .loading { text-align: center; padding: 50px 16px; color: #777; font-size: 14px; }
 .error { background: #FFEBEE; color: #B71C1C; padding: 14px; border-radius: 10px; font-size: 13px; margin: 12px 0; border: 1px solid #FFCDD2; }
 .error code { background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px; font-size: 12px; }
-.toast { position: fixed; bottom: calc(24px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: #1B2B1A; color: #fff; padding: 12px 20px; border-radius: 24px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,0.25); opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 100; }
+.toast { position: fixed; bottom: calc(24px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: #1B2B1A; color: #fff; padding: 12px 20px; border-radius: 24px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,0.25); opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 200; }
 .toast.show { opacity: 1; }
 .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .footer-link { display: inline-block; margin: 16px 0; color: var(--green-soft); text-decoration: none; font-size: 12px; border-bottom: 1px dashed currentColor; }
 html[lang="th"] body { font-family: "Noto Sans Thai", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: none; z-index: 100; padding: 12px; overflow-y: auto; }
+.modal-backdrop.open { display: flex; align-items: flex-start; justify-content: center; }
+.modal { background: #fff; border-radius: 16px; width: 100%; max-width: 580px; margin: auto; padding: 18px; position: relative; }
+.modal h2 { margin: 0 0 4px; font-size: 18px; color: var(--green); }
+.modal .modal-sub { font-size: 13px; color: #777; margin-bottom: 14px; }
+.modal-close { position: absolute; top: 10px; right: 10px; background: #F5F5F5; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; cursor: pointer; color: #555; }
+.modal-close:active { background: #E5E5E5; }
+.form-row { margin-bottom: 14px; }
+.form-row label { display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--green); margin-bottom: 6px; letter-spacing: 0.5px; }
+.upload-box { border: 2px dashed #D8D6CF; border-radius: 10px; padding: 16px; text-align: center; cursor: pointer; background: var(--bg); transition: all 0.15s; }
+.upload-box:hover, .upload-box.has-file { border-color: var(--green-soft); background: #F5F8F2; }
+.upload-box input[type=file] { display: none; }
+.upload-box .upload-text { font-size: 14px; color: #555; }
+.upload-box .upload-text strong { color: var(--green); }
+.upload-box .upload-sub { font-size: 11px; color: #999; margin-top: 4px; }
+.slogan-pick { display: flex; gap: 8px; }
+.slogan-pick label { flex: 1; cursor: pointer; padding: 10px 12px; border: 2px solid #ECEAE3; border-radius: 10px; text-align: center; background: #fff; transition: all 0.15s; font-size: 13px; color: #555; }
+.slogan-pick label.active { border-color: var(--green); background: #F5F8F2; color: var(--green); font-weight: 700; }
+.slogan-pick input[type=radio] { display: none; }
+.preview-wrap { position: relative; margin: 14px 0; background: #f0f0f0; border-radius: 10px; overflow: hidden; aspect-ratio: 1 / 1; max-height: 480px; }
+.preview-wrap canvas { display: block; width: 100%; height: 100%; object-fit: contain; background: #fff; }
+.preview-placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #999; font-size: 13px; flex-direction: column; gap: 8px; padding: 20px; text-align: center; }
+.composer-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.btn-download { background: var(--green); color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; grid-column: 1 / -1; }
+.btn-download:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-download:active:not(:disabled) { background: #3A5430; transform: scale(0.98); }
+.btn-recompose { background: var(--cream); color: var(--green); border: 1px solid #E5DCC8; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; grid-column: 1 / -1; }
+.btn-recompose:active { background: #ECE2CB; }
+@media (min-width: 480px) { .composer-actions { grid-template-columns: 1fr 2fr; } .btn-recompose { grid-column: 1; } .btn-download { grid-column: 2; } }
 </style>
 </head>
 <body>
@@ -80,7 +114,6 @@ html[lang="th"] body { font-family: "Noto Sans Thai", -apple-system, BlinkMacSys
       <button class="reload-btn" id="reloadBtn">↻</button>
     </div>
   </header>
-
   <div class="controls">
     <select id="keywordFilter" aria-label="Keyword filter"><option value="">…</option></select>
     <select id="statusFilter" aria-label="Status filter">
@@ -90,210 +123,171 @@ html[lang="th"] body { font-family: "Noto Sans Thai", -apple-system, BlinkMacSys
     </select>
     <span class="stats" id="stats">…</span>
   </div>
-
   <div id="content">
     <div class="loading"><div class="spinner"></div><span id="loadingText">Loading drafts…</span></div>
   </div>
-
   <a class="footer-link" id="openSheetLink" href="https://docs.google.com/spreadsheets/d/1EtoZTnP9P_NLMm_LuKyxYmMDXgvUHZTISRJvGtgc1rU" target="_blank" rel="noopener">Open full Sheet ↗</a>
 </div>
-
+<div class="modal-backdrop" id="composerModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <button class="modal-close" id="composerClose" aria-label="Close">×</button>
+    <h2 id="composerTitle">Compose post</h2>
+    <div class="modal-sub" id="composerSub">Upload a photo. We'll add your slogan, logo and URL.</div>
+    <div class="form-row">
+      <label id="labelPhoto">Photo</label>
+      <label class="upload-box" id="uploadBox">
+        <input type="file" id="photoInput" accept="image/*">
+        <div class="upload-text" id="uploadText"><strong>Tap to upload</strong> or drag a photo</div>
+        <div class="upload-sub" id="uploadSub">JPG / PNG · best 1:1 or larger</div>
+      </label>
+    </div>
+    <div class="form-row">
+      <label id="labelSlogan">Slogan language</label>
+      <div class="slogan-pick" id="sloganPick">
+        <label class="active"><input type="radio" name="sl" value="en" checked>EN</label>
+        <label><input type="radio" name="sl" value="th">TH</label>
+      </div>
+    </div>
+    <div class="preview-wrap">
+      <canvas id="previewCanvas" width="1080" height="1080"></canvas>
+      <div class="preview-placeholder" id="previewPlaceholder">
+        <div style="font-size: 32px;">🖼️</div>
+        <div id="previewHint">Upload a photo to see the preview</div>
+      </div>
+    </div>
+    <div class="composer-actions">
+      <button class="btn-recompose" id="recomposeBtn" disabled>↻ <span id="recomposeLabel">Re-compose</span></button>
+      <button class="btn-download" id="downloadBtn" disabled>⬇ <span id="downloadLabel">Download PNG</span></button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast">Copied</div>
-
 <script>
 const SPREADSHEET_ID = '1EtoZTnP9P_NLMm_LuKyxYmMDXgvUHZTISRJvGtgc1rU';
 const SHEET_NAME = 'Borradores';
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 const STORAGE_KEY = 'platinum_published_v1';
 const LANG_KEY = 'platinum_lang_v1';
-
+const BRAND_URL = 'platinum-thailand.com';
+const LOGO_SVG_RAW = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2363 781"><g><path d="M589.583,234.636l-20,71.667c-0.416,2.083 0,4.167 2.084,5.417c1.666,1.25 4.166,1.25 5.833,-0l57.917,-46.25l62.083,41.25c1.667,1.25 4.167,1.25 5.833,-0c1.667,-1.25 2.084,-3.334 1.667,-5.417l-25.833,-69.583l57.916,-46.25c1.667,-1.25 2.084,-3.334 1.667,-5.417c-0.833,-2.083 -2.5,-3.333 -4.583,-2.917l-74.167,3.334l-25.833,-69.584c-0.834,-2.083 -2.5,-3.333 -4.584,-2.916c-2.083,0.416 -3.75,1.666 -4.583,3.333l-20,71.667l-74.167,3.333c-2.083,0 -3.75,1.667 -4.583,3.333c-0.417,2.084 0,4.167 2.083,5.417l61.667,41.25l-0.417,-1.667Z" style="fill:__C__;fill-rule:nonzero;"/><path d="M857.5,227.553l-21.667,78.333c-0.416,2.084 0,4.584 2.084,5.834c2.083,1.25 4.583,1.25 6.25,-0l63.333,-50.417l67.5,44.583c2.083,1.25 4.583,1.25 6.25,0c1.667,-1.25 2.5,-3.75 1.667,-5.833l-28.334,-75.833l63.334,-50.417c1.666,-1.25 2.5,-3.75 1.666,-5.833c-0.833,-2.084 -2.916,-3.334 -5,-3.334l-80.833,3.334l-28.333,-75.834c-0.834,-2.083 -2.917,-3.333 -5,-3.333c-2.084,0 -4.167,1.667 -5,3.75l-21.667,78.333l-80.833,3.334c-2.084,-0 -4.167,1.666 -5,3.75c-0.417,2.083 -0,4.583 2.083,5.833l67.5,45l0,-1.25Z" style="fill:__C__;fill-rule:nonzero;"/><path d="M1144.58,220.053l-23.333,85c-0.833,2.5 0,5 2.5,6.25c2.083,1.25 4.583,1.25 6.667,0l68.75,-55l73.333,48.75c2.083,1.25 4.583,1.25 6.667,0c2.083,-1.667 2.5,-4.167 1.666,-6.25l-30.833,-82.5l68.75,-55c2.083,-1.667 2.5,-4.167 1.667,-6.25c-0.834,-2.5 -2.917,-3.75 -5.417,-3.75l-87.917,3.75l-30.833,-82.5c-0.833,-2.5 -2.917,-3.75 -5.417,-3.75c-2.5,0 -4.583,1.667 -5.416,4.167l-23.334,85l-87.5,3.75c-2.5,-0 -4.583,1.666 -5.416,4.166c-0.834,2.5 -0,5 2.5,6.25l73.333,48.75l-0.417,-0.833Z" style="fill:__C__;fill-rule:nonzero;"/><path d="M2136.25,194.22l-30,108.75c-0.833,2.916 0,6.25 2.917,7.916c2.5,1.667 6.25,1.667 8.75,0l87.916,-70.416l93.75,62.5c2.5,1.666 6.25,1.666 8.75,-0c2.5,-2.084 3.334,-5.417 2.5,-8.334l-39.583,-105.833l88.333,-70.417c2.5,-2.083 3.334,-5.416 2.084,-8.333c-1.25,-2.917 -4.167,-5 -7.084,-4.583l-112.5,5l-39.583,-105.834c-1.25,-2.916 -4.167,-5 -7.083,-4.583c-2.917,0.417 -5.834,2.5 -6.667,5.417l-30,108.75l-112.5,5c-3.333,-0 -5.833,2.5 -6.667,5.416c-0.833,2.917 0,6.25 2.917,7.917l93.75,62.5l0,-0.833Z" style="fill:__C__;fill-rule:nonzero;"/><path d="M1452.5,212.136l-25.417,92.5c-0.833,2.5 0,5.417 2.5,6.667c2.084,1.667 5,1.25 7.084,0l74.583,-59.583l79.583,52.916c2.084,1.667 5,1.25 7.084,0c2.083,-1.666 2.916,-4.583 2.083,-7.083l-33.333,-89.583l74.583,-59.584c2.083,-1.666 2.917,-4.583 2.083,-7.083c-0.833,-2.5 -3.333,-4.167 -6.25,-4.167l-95.416,4.167l-33.334,-89.583c-0.833,-2.5 -3.333,-4.167 -6.25,-4.167c-2.916,0 -5,2.083 -5.833,4.583l-25.417,92.5l-95.416,4.167c-2.5,0 -5,2.083 -5.834,4.583c-0.833,2.5 0,5.417 2.5,6.667l79.584,52.917l0.833,-0.834Z" style="fill:__C__;fill-rule:nonzero;"/><path d="M1783.33,203.386l-27.916,100.417c-0.834,2.917 -0,5.833 2.916,7.5c2.5,1.667 5.834,1.667 7.917,0l81.25,-65l86.667,57.5c2.5,1.667 5.833,1.667 7.916,0c2.5,-1.667 3.334,-5 2.084,-7.5l-36.25,-97.5l81.25,-65c2.083,-1.667 3.333,-5 2.083,-7.5c-0.833,-2.917 -3.75,-4.583 -6.667,-4.167l-103.75,4.584l-36.25,-97.5c-0.833,-2.917 -3.75,-4.584 -6.666,-4.584c-2.917,0 -5.417,2.084 -6.25,5l-27.917,100.417l-103.75,4.583c-2.917,0 -5.417,2.084 -6.25,5c-0.833,2.917 -0,5.834 2.917,7.5l86.666,57.5l0,-1.25Z" style="fill:__C__;fill-rule:nonzero;"/></g><g><path d="M198.333,406.72c-18.75,-10.834 -40.833,-16.25 -66.666,-16.25l-131.667,-0l0,385.416l77.5,0l0,-135.833l54.167,0c25.833,0 47.916,-5 66.666,-15c18.75,-10 32.917,-24.167 42.917,-42.5c10,-18.333 15,-39.583 15,-65c0,-25.417 -5,-46.667 -15,-65.833c-10,-19.167 -24.583,-34.167 -42.917,-45Zm-25,140.833c-3.333,8.75 -8.333,15.417 -15,20.417c-7.083,5 -15.833,7.5 -26.666,7.5l-54.167,-0l0,-120.834l54.167,0c10.833,0 20,2.917 26.666,8.75c6.667,5.834 12.084,13.75 15,23.334c3.334,9.583 4.584,20 4.584,31.25c-0,11.25 -1.667,20.833 -4.584,29.583Z" style="fill:__C__;fill-rule:nonzero;"/><path d="M513.333,775.47l0,-64.167l-136.25,0l0,-321.25l-77.5,0l0,385.417l213.75,-0Z" style="fill:__C__;fill-rule:nonzero;"/><path d="M668.333,390.053l-120.416,385.417l81.666,-0l20.834,-79.584l106.25,0l20.833,79.584l82.5,-0l-121.667,-385.417l-70.416,0l0.416,0Zm-0.833,241.667l36.25,-137.917l36.25,137.917l-72.5,-0Z" style="fill:__C__;fill-rule:nonzero;"/><path d="M1105,390.053l0,64.583l-95.833,0l-0,320.834l-77.084,-0l0,-320.834l-93.75,0l0,-64.583l266.667,0Z" style="fill:__C__;fill-rule:nonzero;"/><rect x="1160.42" y="390.053" width="77.083" height="385.417" style="fill:__C__;"/><path d="M1528.75,633.803l-122.083,-243.75l-73.75,0l-0,385.417l73.75,-0l-0,-241.25l120.833,241.25l75,-0l0,-385.417l-73.75,0l0,243.75Z" style="fill:__C__;fill-rule:nonzero;"/><path d="M1857.92,654.636c-0,16.667 -2.084,29.584 -5.834,38.75c-3.75,9.167 -9.166,15 -16.25,18.334c-7.083,3.333 -16.25,4.583 -27.083,4.583c-10.833,0 -20,-1.667 -27.083,-4.583c-7.5,-3.334 -12.917,-9.167 -16.667,-18.334c-3.75,-9.166 -5.833,-21.666 -5.833,-38.75l-0,-264.583l-77.084,0l0,264.583c0,29.584 5.417,53.75 15.834,72.5c10.833,18.75 25.416,32.084 45,40.834c19.166,8.75 41.25,12.916 65.833,12.916c24.583,0 46.25,-4.166 65.417,-12.916c19.166,-8.75 34.166,-22.084 45,-40.834c10.833,-18.75 16.25,-42.916 16.25,-72.5l-0,-264.583l-77.084,0l0,264.583l-0.416,0Z" style="fill:__C__;fill-rule:nonzero;"/><path d="M2362.5,390.053l0,385.417l-74.583,-0l-0,-131.25l5,-134.167l-75.417,265.417l-57.917,-0l-75,-245.417l4.584,114.167l-0,131.25l-74.584,-0l0,-385.417l95,0l79.167,263.75l77.917,-263.75l95.833,0Z" style="fill:__C__;fill-rule:nonzero;"/></g></svg>`;
+function logoDataURL(color) {
+  const svg = LOGO_SVG_RAW.replace(/__C__/g, color);
+  return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+}
 const I18N = {
-  es: {
-    subtitle: "Borradores listos para publicar", reload: "Recargar", allKeywords: "Todas las keywords",
-    pendingOnly: "Solo pendientes", allStatus: "Todos", publishedOnly: "Solo publicados",
-    briefSection: "Brief para ChatGPT + Canva", seeMore: "Ver más", seeLess: "Ver menos",
-    copyBrief: "📋 Copiar BRIEF completo",
-    copyCaptionEn: "🇬🇧 Copiar caption EN", copyCaptionTh: "🇹🇭 Copiar caption TH",
-    copyHashtags: "# Copiar hashtags",
-    markPublished: "○ Marcar como publicado", isPublished: "✓ Marcado como publicado",
-    noMatch: "No hay borradores que coincidan con el filtro.", loading: "Leyendo borradores del Sheet…",
-    briefCopied: "Brief copiado",
-    captionEnCopied: "Caption EN + hashtags copiados",
-    captionThCopied: "Caption TH + hashtags copiados",
-    hashtagsCopied: "Hashtags copiados",
-    nothingToCopy: "Vacío, nada que copiar", copyError: "Error al copiar",
-    errorTitle: "No se pudo leer el Sheet",
-    errorFix: "Solución: abre el Sheet, pulsa Compartir arriba a la derecha, cambia Acceso general a \"Cualquiera con el enlace\" (rol: Lector). Luego recarga esta página.",
-    openSheet: "Abrir Sheet completo ↗",
-    httpError: "HTTP {status}. ¿Está el Sheet compartido como \"Cualquiera con el enlace\"?",
-    htmlInsteadCsv: "Google devolvió HTML en lugar de CSV. Probablemente el Sheet no está público.",
-  },
-  en: {
-    subtitle: "Drafts ready to publish", reload: "Reload", allKeywords: "All keywords",
-    pendingOnly: "Pending only", allStatus: "All", publishedOnly: "Published only",
-    briefSection: "Brief for ChatGPT + Canva", seeMore: "See more", seeLess: "See less",
-    copyBrief: "📋 Copy full BRIEF",
-    copyCaptionEn: "🇬🇧 Copy caption EN", copyCaptionTh: "🇹🇭 Copy caption TH",
-    copyHashtags: "# Copy hashtags",
-    markPublished: "○ Mark as published", isPublished: "✓ Marked as published",
-    noMatch: "No drafts match the filter.", loading: "Reading drafts from the Sheet…",
-    briefCopied: "Brief copied",
-    captionEnCopied: "EN caption + hashtags copied",
-    captionThCopied: "TH caption + hashtags copied",
-    hashtagsCopied: "Hashtags copied",
-    nothingToCopy: "Empty, nothing to copy", copyError: "Copy error",
-    errorTitle: "Couldn't read the Sheet",
-    errorFix: "Fix: open the Sheet, click Share at the top right, change General access to \"Anyone with the link\" (role: Viewer). Then reload this page.",
-    openSheet: "Open full Sheet ↗",
-    httpError: "HTTP {status}. Is the Sheet shared as \"Anyone with the link\"?",
-    htmlInsteadCsv: "Google returned HTML instead of CSV. The Sheet is probably not public.",
-  },
-  th: {
-    subtitle: "ฉบับร่างพร้อมเผยแพร่", reload: "รีโหลด", allKeywords: "คีย์เวิร์ดทั้งหมด",
-    pendingOnly: "เฉพาะที่รอ", allStatus: "ทั้งหมด", publishedOnly: "เฉพาะที่เผยแพร่แล้ว",
-    briefSection: "บรีฟสำหรับ ChatGPT + Canva", seeMore: "ดูเพิ่ม", seeLess: "ดูน้อยลง",
-    copyBrief: "📋 คัดลอกบรีฟทั้งหมด",
-    copyCaptionEn: "🇬🇧 คัดลอกแคปชั่น EN", copyCaptionTh: "🇹🇭 คัดลอกแคปชั่น TH",
-    copyHashtags: "# คัดลอกแฮชแท็ก",
-    markPublished: "○ ทำเครื่องหมายว่าเผยแพร่", isPublished: "✓ ทำเครื่องหมายแล้ว",
-    noMatch: "ไม่พบฉบับร่างที่ตรงกับตัวกรอง", loading: "กำลังอ่านฉบับร่างจาก Sheet…",
-    briefCopied: "คัดลอกบรีฟแล้ว",
-    captionEnCopied: "คัดลอกแคปชั่น EN + แฮชแท็กแล้ว",
-    captionThCopied: "คัดลอกแคปชั่น TH + แฮชแท็กแล้ว",
-    hashtagsCopied: "คัดลอกแฮชแท็กแล้ว",
-    nothingToCopy: "ว่างเปล่า ไม่มีอะไรให้คัดลอก", copyError: "ข้อผิดพลาดในการคัดลอก",
-    errorTitle: "ไม่สามารถอ่าน Sheet ได้",
-    errorFix: "วิธีแก้: เปิด Sheet กดปุ่ม Share มุมบนขวา เปลี่ยน General access เป็น \"Anyone with the link\" (สิทธิ์: Viewer) จากนั้นรีโหลดหน้านี้",
-    openSheet: "เปิด Sheet ทั้งหมด ↗",
-    httpError: "HTTP {status}. Sheet ถูกแชร์เป็น \"Anyone with the link\" หรือไม่?",
-    htmlInsteadCsv: "Google ส่ง HTML กลับมาแทน CSV — Sheet อาจไม่ได้เผยแพร่",
-  },
+  es: { subtitle: "Borradores listos para publicar", reload: "Recargar", allKeywords: "Todas las keywords", pendingOnly: "Solo pendientes", allStatus: "Todos", publishedOnly: "Solo publicados", briefSection: "Brief para ChatGPT + Canva", seeMore: "Ver más", seeLess: "Ver menos", copyBrief: "📋 Copiar BRIEF completo", copyCaptionEn: "🇬🇧 Copiar caption EN", copyCaptionTh: "🇹🇭 Copiar caption TH", copyHashtags: "# Copiar hashtags", composeBtn: "🎨 Componer post", markPublished: "○ Marcar como publicado", isPublished: "✓ Marcado como publicado", noMatch: "No hay borradores que coincidan con el filtro.", loading: "Leyendo borradores del Sheet…", briefCopied: "Brief copiado", captionEnCopied: "Caption EN + hashtags copiados", captionThCopied: "Caption TH + hashtags copiados", hashtagsCopied: "Hashtags copiados", nothingToCopy: "Vacío, nada que copiar", copyError: "Error al copiar", errorTitle: "No se pudo leer el Sheet", errorFix: "Solución: abre el Sheet, pulsa Compartir arriba a la derecha, cambia Acceso general a \"Cualquiera con el enlace\" (rol: Lector). Luego recarga esta página.", openSheet: "Abrir Sheet completo ↗", httpError: "HTTP {status}. ¿Está el Sheet compartido como \"Cualquiera con el enlace\"?", htmlInsteadCsv: "Google devolvió HTML en lugar de CSV. Probablemente el Sheet no está público.", composerTitle: "Componer post", composerSub: "Sube una foto. Añadiremos slogan, logo y URL automáticamente.", labelPhoto: "Foto", labelSlogan: "Idioma del slogan", uploadText: "<strong>Toca para subir</strong> o arrastra una foto", uploadSub: "JPG / PNG · mejor 1:1 o más grande", previewHint: "Sube una foto para ver la previsualización", recompose: "Re-componer", download: "Descargar PNG", composing: "Componiendo…", downloadStarted: "Descargando imagen…" },
+  en: { subtitle: "Drafts ready to publish", reload: "Reload", allKeywords: "All keywords", pendingOnly: "Pending only", allStatus: "All", publishedOnly: "Published only", briefSection: "Brief for ChatGPT + Canva", seeMore: "See more", seeLess: "See less", copyBrief: "📋 Copy full BRIEF", copyCaptionEn: "🇬🇧 Copy caption EN", copyCaptionTh: "🇹🇭 Copy caption TH", copyHashtags: "# Copy hashtags", composeBtn: "🎨 Compose post", markPublished: "○ Mark as published", isPublished: "✓ Marked as published", noMatch: "No drafts match the filter.", loading: "Reading drafts from the Sheet…", briefCopied: "Brief copied", captionEnCopied: "EN caption + hashtags copied", captionThCopied: "TH caption + hashtags copied", hashtagsCopied: "Hashtags copied", nothingToCopy: "Empty, nothing to copy", copyError: "Copy error", errorTitle: "Couldn't read the Sheet", errorFix: "Fix: open the Sheet, click Share at the top right, change General access to \"Anyone with the link\" (role: Viewer). Then reload this page.", openSheet: "Open full Sheet ↗", httpError: "HTTP {status}. Is the Sheet shared as \"Anyone with the link\"?", htmlInsteadCsv: "Google returned HTML instead of CSV. The Sheet is probably not public.", composerTitle: "Compose post", composerSub: "Upload a photo. We'll add slogan, logo and URL automatically.", labelPhoto: "Photo", labelSlogan: "Slogan language", uploadText: "<strong>Tap to upload</strong> or drag a photo", uploadSub: "JPG / PNG · best 1:1 or larger", previewHint: "Upload a photo to see the preview", recompose: "Re-compose", download: "Download PNG", composing: "Composing…", downloadStarted: "Downloading image…" },
+  th: { subtitle: "ฉบับร่างพร้อมเผยแพร่", reload: "รีโหลด", allKeywords: "คีย์เวิร์ดทั้งหมด", pendingOnly: "เฉพาะที่รอ", allStatus: "ทั้งหมด", publishedOnly: "เฉพาะที่เผยแพร่แล้ว", briefSection: "บรีฟสำหรับ ChatGPT + Canva", seeMore: "ดูเพิ่ม", seeLess: "ดูน้อยลง", copyBrief: "📋 คัดลอกบรีฟทั้งหมด", copyCaptionEn: "🇬🇧 คัดลอกแคปชั่น EN", copyCaptionTh: "🇹🇭 คัดลอกแคปชั่น TH", copyHashtags: "# คัดลอกแฮชแท็ก", composeBtn: "🎨 สร้างโพสต์", markPublished: "○ ทำเครื่องหมายว่าเผยแพร่", isPublished: "✓ ทำเครื่องหมายแล้ว", noMatch: "ไม่พบฉบับร่างที่ตรงกับตัวกรอง", loading: "กำลังอ่านฉบับร่างจาก Sheet…", briefCopied: "คัดลอกบรีฟแล้ว", captionEnCopied: "คัดลอกแคปชั่น EN + แฮชแท็กแล้ว", captionThCopied: "คัดลอกแคปชั่น TH + แฮชแท็กแล้ว", hashtagsCopied: "คัดลอกแฮชแท็กแล้ว", nothingToCopy: "ว่างเปล่า ไม่มีอะไรให้คัดลอก", copyError: "ข้อผิดพลาดในการคัดลอก", errorTitle: "ไม่สามารถอ่าน Sheet ได้", errorFix: "วิธีแก้: เปิด Sheet กดปุ่ม Share มุมบนขวา เปลี่ยน General access เป็น \"Anyone with the link\" (สิทธิ์: Viewer) จากนั้นรีโหลดหน้านี้", openSheet: "เปิด Sheet ทั้งหมด ↗", httpError: "HTTP {status}. Sheet ถูกแชร์เป็น \"Anyone with the link\" หรือไม่?", htmlInsteadCsv: "Google ส่ง HTML กลับมาแทน CSV — Sheet อาจไม่ได้เผยแพร่", composerTitle: "สร้างโพสต์", composerSub: "อัปโหลดรูปภาพ เราจะเพิ่มสโลแกน โลโก้ และ URL ให้อัตโนมัติ", labelPhoto: "รูปภาพ", labelSlogan: "ภาษาของสโลแกน", uploadText: "<strong>แตะเพื่ออัปโหลด</strong> หรือลากรูปภาพ", uploadSub: "JPG / PNG · ขนาด 1:1 หรือใหญ่กว่าจะดีที่สุด", previewHint: "อัปโหลดรูปภาพเพื่อดูตัวอย่าง", recompose: "สร้างใหม่", download: "ดาวน์โหลด PNG", composing: "กำลังสร้าง…", downloadStarted: "กำลังดาวน์โหลด…" },
 };
-
 let currentLang = localStorage.getItem(LANG_KEY) || 'en';
 function t(key) { return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key; }
-
 let allRows = [];
 let publishedSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
-
+let composerState = { row: null, photo: null, slogan: 'en' };
 function parseCSV(text) {
-  const rows = [];
-  let row = [], field = '', inQuotes = false, i = 0;
-  while (i < text.length) {
-    const c = text[i];
-    if (inQuotes) {
-      if (c === '"') { if (text[i + 1] === '"') { field += '"'; i += 2; continue; } inQuotes = false; i++; }
-      else { field += c; i++; }
-    } else {
-      if (c === '"') { inQuotes = true; i++; }
-      else if (c === ',') { row.push(field); field = ''; i++; }
-      else if (c === '\r') { i++; }
-      else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; i++; }
-      else { field += c; i++; }
-    }
-  }
+  const rows = []; let row = [], field = '', inQuotes = false, i = 0;
+  while (i < text.length) { const c = text[i];
+    if (inQuotes) { if (c === '"') { if (text[i + 1] === '"') { field += '"'; i += 2; continue; } inQuotes = false; i++; } else { field += c; i++; } }
+    else { if (c === '"') { inQuotes = true; i++; } else if (c === ',') { row.push(field); field = ''; i++; } else if (c === '\r') { i++; } else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; i++; } else { field += c; i++; } } }
   if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
   return rows;
 }
-
 function rowsToObjects(rows) {
   if (rows.length < 2) return [];
   const headers = rows[0].map(h => h.trim());
-  return rows.slice(1).filter(r => r.some(c => c && c.trim())).map(r => {
-    const obj = {};
-    headers.forEach((h, i) => obj[h] = (r[i] || '').trim());
-    return obj;
-  });
+  return rows.slice(1).filter(r => r.some(c => c && c.trim())).map(r => { const obj = {}; headers.forEach((h, i) => obj[h] = (r[i] || '').trim()); return obj; });
 }
-
-function extractHashtagsFromBrief(brief) {
-  const m = brief.match(/HASHTAGS[^:]*:\s*([\s\S]*?)(?=━|ADJUNTO|ATTACHED|$)/i);
-  return m ? m[1].trim() : '';
-}
-
-function pickBrief(row) {
-  if (currentLang === 'es' && row.brief_es) return row.brief_es;
-  if (currentLang === 'en' && row.brief_en) return row.brief_en;
-  if (currentLang === 'th' && row.brief_th) return row.brief_th;
-  return row.brief;
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 1600);
-}
+function extractHashtagsFromBrief(brief) { const m = brief.match(/HASHTAGS[^:]*:\s*([\s\S]*?)(?=━|ADJUNTO|ATTACHED|$)/i); return m ? m[1].trim() : ''; }
+function pickBrief(row) { if (currentLang === 'es' && row.brief_es) return row.brief_es; if (currentLang === 'en' && row.brief_en) return row.brief_en; if (currentLang === 'th' && row.brief_th) return row.brief_th; return row.brief; }
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 1600); }
 function copyText(text, label) {
   if (!text) { showToast(t('nothingToCopy')); return; }
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text).then(() => showToast('✓ ' + label)).catch(() => fallbackCopy(text, label));
-  } else { fallbackCopy(text, label); }
+  if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(() => showToast('✓ ' + label)).catch(() => fallbackCopy(text, label)); }
+  else { fallbackCopy(text, label); }
 }
-function fallbackCopy(text, label) {
-  const ta = document.createElement('textarea');
-  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-  document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); showToast('✓ ' + label); }
-  catch { showToast(t('copyError')); }
-  document.body.removeChild(ta);
-}
-function togglePublished(id) {
-  if (publishedSet.has(id)) publishedSet.delete(id); else publishedSet.add(id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([...publishedSet]));
-  render();
-}
+function fallbackCopy(text, label) { const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); showToast('✓ ' + label); } catch { showToast(t('copyError')); } document.body.removeChild(ta); }
+function togglePublished(id) { if (publishedSet.has(id)) publishedSet.delete(id); else publishedSet.add(id); localStorage.setItem(STORAGE_KEY, JSON.stringify([...publishedSet])); render(); }
 function isPublished(row) { return publishedSet.has(row.id) || row.status === 'Publicado'; }
-function escapeHtml(s) {
-  if (!s) return '';
-  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+function escapeHtml(s) { if (!s) return ''; return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+function openComposer(row) {
+  composerState = { row, photo: null, slogan: 'en' };
+  document.getElementById('composerModal').classList.add('open');
+  document.getElementById('composerTitle').textContent = t('composerTitle');
+  document.getElementById('composerSub').textContent = t('composerSub');
+  document.getElementById('labelPhoto').textContent = t('labelPhoto');
+  document.getElementById('labelSlogan').textContent = t('labelSlogan');
+  document.getElementById('uploadText').innerHTML = t('uploadText');
+  document.getElementById('uploadSub').textContent = t('uploadSub');
+  document.getElementById('previewHint').textContent = t('previewHint');
+  document.getElementById('recomposeLabel').textContent = t('recompose');
+  document.getElementById('downloadLabel').textContent = t('download');
+  document.getElementById('photoInput').value = '';
+  document.getElementById('uploadBox').classList.remove('has-file');
+  document.getElementById('previewPlaceholder').style.display = 'flex';
+  document.getElementById('recomposeBtn').disabled = true;
+  document.getElementById('downloadBtn').disabled = true;
+  document.querySelectorAll('#sloganPick label').forEach(l => l.classList.remove('active'));
+  document.querySelector('#sloganPick label:first-child').classList.add('active');
+  document.querySelector('input[name="sl"][value="en"]').checked = true;
+  const c = document.getElementById('previewCanvas'); c.getContext('2d').clearRect(0, 0, c.width, c.height);
 }
-
+function closeComposer() { document.getElementById('composerModal').classList.remove('open'); composerState = { row: null, photo: null, slogan: 'en' }; }
+function loadImage(src) { return new Promise((resolve, reject) => { const img = new Image(); img.crossOrigin = 'anonymous'; img.onload = () => resolve(img); img.onerror = reject; img.src = src; }); }
+function drawImageCover(ctx, img, x, y, w, h) { const ratio = Math.max(w / img.width, h / img.height); const dw = img.width * ratio, dh = img.height * ratio; ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh); }
+function wrapLines(ctx, text, maxWidth) { const words = text.split(/\s+/); const lines = []; let line = ''; for (const w of words) { const test = line ? line + ' ' + w : w; if (ctx.measureText(test).width <= maxWidth) line = test; else { if (line) lines.push(line); line = w; } } if (line) lines.push(line); return lines; }
+async function compose() {
+  const { row, photo, slogan } = composerState;
+  if (!row || !photo) return;
+  const canvas = document.getElementById('previewCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  try { await document.fonts.load('700 80px "Playfair Display"'); await document.fonts.load('600 22px "Inter"'); } catch (e) {}
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+  drawImageCover(ctx, photo, 0, 0, W, H);
+  const gradHeight = Math.round(H * 0.5);
+  const grad = ctx.createLinearGradient(0, H - gradHeight, 0, H);
+  grad.addColorStop(0, 'rgba(27, 43, 26, 0)'); grad.addColorStop(0.4, 'rgba(27, 43, 26, 0.55)'); grad.addColorStop(1, 'rgba(27, 43, 26, 0.92)');
+  ctx.fillStyle = grad; ctx.fillRect(0, H - gradHeight, W, gradHeight);
+  const logoImg = await loadImage(logoDataURL('%23FFFFFF'));
+  const logoMaxW = Math.round(W * 0.28); const logoRatio = logoImg.height / logoImg.width;
+  const logoW = logoMaxW; const logoH = logoMaxW * logoRatio;
+  ctx.save(); ctx.shadowColor = 'rgba(0,0,0,0.4)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 2;
+  ctx.drawImage(logoImg, 40, 40, logoW, logoH); ctx.restore();
+  const sloganText = slogan === 'th' ? (row.slogan_th || row.slogan_en) : (row.slogan_en || row.slogan_th);
+  const isThai = slogan === 'th';
+  const sloganFont = isThai ? '"Noto Sans Thai", sans-serif' : '"Playfair Display", serif';
+  const sloganWeight = isThai ? '700' : '800';
+  const sloganMaxW = W - 120; let fontSize = isThai ? 70 : 84; let lines = [];
+  while (fontSize > 28) { ctx.font = `${sloganWeight} ${fontSize}px ${sloganFont}`; lines = wrapLines(ctx, '"' + sloganText + '"', sloganMaxW); const totalH = lines.length * fontSize * 1.1; if (lines.length <= 4 && totalH < gradHeight * 0.55) break; fontSize -= 4; }
+  ctx.font = `${sloganWeight} ${fontSize}px ${sloganFont}`; ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+  ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 2;
+  const totalSloganH = lines.length * fontSize * 1.1; const urlSpace = 80;
+  let cy = H - urlSpace - 20 - totalSloganH + fontSize;
+  for (const ln of lines) { ctx.fillText(ln, W / 2, cy); cy += fontSize * 1.1; }
+  ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+  ctx.font = '600 24px "Inter", sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.fillText(BRAND_URL, W / 2, H - 36);
+  document.getElementById('previewPlaceholder').style.display = 'none';
+  document.getElementById('downloadBtn').disabled = false;
+  document.getElementById('recomposeBtn').disabled = false;
+}
+function downloadComposed() {
+  const canvas = document.getElementById('previewCanvas'); const row = composerState.row;
+  const slug = (row.keyword_en || 'platinum').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+  const date = (row.fecha || '').replace(/[^0-9]/g, '').slice(0, 8);
+  const filename = `platinum-${slug}-${composerState.slogan}-${date || Date.now()}.png`;
+  canvas.toBlob(blob => { const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); showToast('✓ ' + t('downloadStarted')); }, 'image/png', 0.95);
+}
 function renderCard(row) {
   const card = document.createElement('div');
   card.className = 'card' + (isPublished(row) ? ' published' : '');
-  const brief = pickBrief(row);
-  const briefHashtags = extractHashtagsFromBrief(brief);
-  const finalHashtags = briefHashtags || row.hashtags || '';
-
-  const captionEn = row.ig_caption_en || row.fb_post_en || '';
-  const captionTh = row.ig_caption_th || row.fb_post_th || '';
-  const captionEnPlus = captionEn + (finalHashtags ? '\n\n' + finalHashtags : '');
-  const captionThPlus = captionTh + (finalHashtags ? '\n\n' + finalHashtags : '');
-
-  const slogansHtml = `
-    <div class="slogans">
-      ${row.slogan_en ? `<div class="slogan"><span class="lang-tag">EN</span>"${escapeHtml(row.slogan_en)}"</div>` : ''}
-      ${row.slogan_th ? `<div class="slogan"><span class="lang-tag">TH</span>"${escapeHtml(row.slogan_th)}"</div>` : ''}
-    </div>
-  `;
-
-  card.innerHTML = `
-    <div class="card-head">
-      <div class="kw">
-        ${escapeHtml(row.keyword_en)}
-        <span class="th">${escapeHtml(row.keyword_th)}</span>
-      </div>
-      <div class="date">${escapeHtml(row.fecha)}</div>
-    </div>
-    ${slogansHtml}
-    <div class="section-title">${escapeHtml(t('briefSection'))}</div>
-    <div class="brief-preview">${escapeHtml(brief)}</div>
-    <button class="toggle-expand">${escapeHtml(t('seeMore'))}</button>
-    <div class="actions">
-      <button class="btn-primary" data-a="brief">${escapeHtml(t('copyBrief'))}</button>
-      <button class="btn-secondary" data-a="caption-en">${escapeHtml(t('copyCaptionEn'))}</button>
-      <button class="btn-secondary" data-a="caption-th">${escapeHtml(t('copyCaptionTh'))}</button>
-      <button class="btn-secondary btn-full" data-a="hashtags">${escapeHtml(t('copyHashtags'))}</button>
-      <button class="btn-publish" data-a="publish">${escapeHtml(isPublished(row) ? t('isPublished') : t('markPublished'))}</button>
-    </div>
-  `;
-
-  card.querySelector('.toggle-expand').onclick = (e) => {
-    const p = card.querySelector('.brief-preview');
-    const exp = p.classList.toggle('expanded');
-    e.target.textContent = exp ? t('seeLess') : t('seeMore');
-  };
+  const brief = pickBrief(row); const briefHashtags = extractHashtagsFromBrief(brief); const finalHashtags = briefHashtags || row.hashtags || '';
+  const captionEn = row.ig_caption_en || row.fb_post_en || ''; const captionTh = row.ig_caption_th || row.fb_post_th || '';
+  const captionEnPlus = captionEn + (finalHashtags ? '\n\n' + finalHashtags : ''); const captionThPlus = captionTh + (finalHashtags ? '\n\n' + finalHashtags : '');
+  const slogansHtml = `<div class="slogans">${row.slogan_en ? `<div class="slogan"><span class="lang-tag">EN</span>"${escapeHtml(row.slogan_en)}"</div>` : ''}${row.slogan_th ? `<div class="slogan"><span class="lang-tag">TH</span>"${escapeHtml(row.slogan_th)}"</div>` : ''}</div>`;
+  card.innerHTML = `<div class="card-head"><div class="kw">${escapeHtml(row.keyword_en)}<span class="th">${escapeHtml(row.keyword_th)}</span></div><div class="date">${escapeHtml(row.fecha)}</div></div>${slogansHtml}<div class="section-title">${escapeHtml(t('briefSection'))}</div><div class="brief-preview">${escapeHtml(brief)}</div><button class="toggle-expand">${escapeHtml(t('seeMore'))}</button><div class="actions"><button class="btn-compose" data-a="compose">${escapeHtml(t('composeBtn'))}</button><button class="btn-primary" data-a="brief">${escapeHtml(t('copyBrief'))}</button><button class="btn-secondary" data-a="caption-en">${escapeHtml(t('copyCaptionEn'))}</button><button class="btn-secondary" data-a="caption-th">${escapeHtml(t('copyCaptionTh'))}</button><button class="btn-secondary btn-full" data-a="hashtags">${escapeHtml(t('copyHashtags'))}</button><button class="btn-publish" data-a="publish">${escapeHtml(isPublished(row) ? t('isPublished') : t('markPublished'))}</button></div>`;
+  card.querySelector('.toggle-expand').onclick = (e) => { const p = card.querySelector('.brief-preview'); const exp = p.classList.toggle('expanded'); e.target.textContent = exp ? t('seeLess') : t('seeMore'); };
+  card.querySelector('[data-a="compose"]').onclick = () => openComposer(row);
   card.querySelector('[data-a="brief"]').onclick = () => copyText(brief, t('briefCopied'));
   card.querySelector('[data-a="caption-en"]').onclick = () => copyText(captionEnPlus, t('captionEnCopied'));
   card.querySelector('[data-a="caption-th"]').onclick = () => copyText(captionThPlus, t('captionThCopied'));
@@ -301,65 +295,35 @@ function renderCard(row) {
   card.querySelector('[data-a="publish"]').onclick = () => togglePublished(row.id);
   return card;
 }
-
-function parseDate(s) {
-  const m = (s || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?: (\d{1,2}):(\d{2}))?/);
-  if (!m) return 0;
-  return new Date(+m[3], +m[2] - 1, +m[1], +(m[4]||0), +(m[5]||0)).getTime();
-}
-
+function parseDate(s) { const m = (s || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?: (\d{1,2}):(\d{2}))?/); if (!m) return 0; return new Date(+m[3], +m[2] - 1, +m[1], +(m[4]||0), +(m[5]||0)).getTime(); }
 function applyStaticTexts() {
   document.documentElement.lang = currentLang;
   document.getElementById('subtitle').textContent = t('subtitle');
   document.getElementById('reloadBtn').textContent = '↻ ' + t('reload');
   document.getElementById('openSheetLink').textContent = t('openSheet');
-  const kwSel = document.getElementById('keywordFilter');
-  if (kwSel.options.length > 0) kwSel.options[0].textContent = t('allKeywords');
-  const stSel = document.getElementById('statusFilter');
-  stSel.options[0].textContent = t('pendingOnly');
-  stSel.options[1].textContent = t('allStatus');
-  stSel.options[2].textContent = t('publishedOnly');
-  document.querySelectorAll('.lang-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.lang === currentLang);
-  });
+  const kwSel = document.getElementById('keywordFilter'); if (kwSel.options.length > 0) kwSel.options[0].textContent = t('allKeywords');
+  const stSel = document.getElementById('statusFilter'); stSel.options[0].textContent = t('pendingOnly'); stSel.options[1].textContent = t('allStatus'); stSel.options[2].textContent = t('publishedOnly');
+  document.querySelectorAll('.lang-btn').forEach(b => { b.classList.toggle('active', b.dataset.lang === currentLang); });
 }
-
 function render() {
   applyStaticTexts();
-  const kwFilter = document.getElementById('keywordFilter').value;
-  const stFilter = document.getElementById('statusFilter').value;
+  const kwFilter = document.getElementById('keywordFilter').value; const stFilter = document.getElementById('statusFilter').value;
   let filtered = allRows.slice();
   if (kwFilter) filtered = filtered.filter(r => r.keyword_en === kwFilter);
-  if (stFilter === 'pending') filtered = filtered.filter(r => !isPublished(r));
-  else if (stFilter === 'published') filtered = filtered.filter(r => isPublished(r));
+  if (stFilter === 'pending') filtered = filtered.filter(r => !isPublished(r)); else if (stFilter === 'published') filtered = filtered.filter(r => isPublished(r));
   filtered.sort((a, b) => parseDate(b.fecha) - parseDate(a.fecha));
-  const totalPending = allRows.filter(r => !isPublished(r)).length;
-  const totalDone = allRows.length - totalPending;
-  document.getElementById('stats').innerHTML =
-    `<span class="badge-pending">${totalPending}</span><span class="badge-done">${totalDone}</span>`;
-  const content = document.getElementById('content');
-  content.innerHTML = '';
-  if (filtered.length === 0) {
-    content.innerHTML = `<div class="empty">${escapeHtml(t('noMatch'))}</div>`;
-    return;
-  }
-  const grid = document.createElement('div');
-  grid.className = 'grid';
-  filtered.forEach(r => grid.appendChild(renderCard(r)));
-  content.appendChild(grid);
+  const totalPending = allRows.filter(r => !isPublished(r)).length; const totalDone = allRows.length - totalPending;
+  document.getElementById('stats').innerHTML = `<span class="badge-pending">${totalPending}</span><span class="badge-done">${totalDone}</span>`;
+  const content = document.getElementById('content'); content.innerHTML = '';
+  if (filtered.length === 0) { content.innerHTML = `<div class="empty">${escapeHtml(t('noMatch'))}</div>`; return; }
+  const grid = document.createElement('div'); grid.className = 'grid';
+  filtered.forEach(r => grid.appendChild(renderCard(r))); content.appendChild(grid);
 }
-
 function populateKeywordFilter() {
   const set = new Set(allRows.map(r => r.keyword_en).filter(Boolean));
-  const sel = document.getElementById('keywordFilter');
-  while (sel.options.length > 1) sel.remove(1);
-  [...set].sort().forEach(kw => {
-    const opt = document.createElement('option');
-    opt.value = kw; opt.textContent = kw;
-    sel.appendChild(opt);
-  });
+  const sel = document.getElementById('keywordFilter'); while (sel.options.length > 1) sel.remove(1);
+  [...set].sort().forEach(kw => { const opt = document.createElement('option'); opt.value = kw; opt.textContent = kw; sel.appendChild(opt); });
 }
-
 async function load() {
   document.getElementById('content').innerHTML = `<div class="loading"><div class="spinner"></div><span>${escapeHtml(t('loading'))}</span></div>`;
   try {
@@ -367,43 +331,33 @@ async function load() {
     if (!resp.ok) throw new Error(t('httpError').replace('{status}', resp.status));
     const text = await resp.text();
     if (text.trim().startsWith('<') || text.includes('<HTML>')) throw new Error(t('htmlInsteadCsv'));
-    const rows = parseCSV(text);
-    const objs = rowsToObjects(rows);
-    allRows = objs.map(o => ({
-      id: (o.fecha || '') + '|' + (o.keyword_en || ''),
-      fecha: o.fecha || '',
-      keyword_th: o.keyword_th || '', keyword_en: o.keyword_en || '',
-      slogan_th: o.slogan_th || '', slogan_en: o.slogan_en || '',
-      fb_post_en: o.fb_post_en || '', fb_post_th: o.fb_post_th || '',
-      ig_caption_en: o.ig_caption_en || '', ig_caption_th: o.ig_caption_th || '',
-      hashtags: o.hashtags || '', image_concept: o.image_concept || '',
-      imagen_url: o.imagen_url || '', status: o.status || '',
-      brief: o.brief_chatgpt || '',
-      brief_es: o.brief_chatgpt_es || '',
-      brief_en: o.brief_chatgpt_en || '',
-      brief_th: o.brief_chatgpt_th || '',
-    })).filter(r => r.fecha && r.brief);
-    populateKeywordFilter();
-    render();
+    const rows = parseCSV(text); const objs = rowsToObjects(rows);
+    allRows = objs.map(o => ({ id: (o.fecha || '') + '|' + (o.keyword_en || ''), fecha: o.fecha || '', keyword_th: o.keyword_th || '', keyword_en: o.keyword_en || '', slogan_th: o.slogan_th || '', slogan_en: o.slogan_en || '', fb_post_en: o.fb_post_en || '', fb_post_th: o.fb_post_th || '', ig_caption_en: o.ig_caption_en || '', ig_caption_th: o.ig_caption_th || '', hashtags: o.hashtags || '', image_concept: o.image_concept || '', imagen_url: o.imagen_url || '', status: o.status || '', brief: o.brief_chatgpt || '', brief_es: o.brief_chatgpt_es || '', brief_en: o.brief_chatgpt_en || '', brief_th: o.brief_chatgpt_th || '' })).filter(r => r.fecha && r.brief);
+    populateKeywordFilter(); render();
   } catch (err) {
-    document.getElementById('content').innerHTML =
-      `<div class="error"><b>${escapeHtml(t('errorTitle'))}</b><br><br>${escapeHtml(err.message || String(err))}<br><br><b>${escapeHtml(t('errorFix'))}</b></div>`;
+    document.getElementById('content').innerHTML = `<div class="error"><b>${escapeHtml(t('errorTitle'))}</b><br><br>${escapeHtml(err.message || String(err))}<br><br><b>${escapeHtml(t('errorFix'))}</b></div>`;
   }
 }
-
-document.querySelectorAll('.lang-btn').forEach(btn => {
-  btn.onclick = () => {
-    currentLang = btn.dataset.lang;
-    localStorage.setItem(LANG_KEY, currentLang);
-    render();
-  };
-});
+document.querySelectorAll('.lang-btn').forEach(btn => { btn.onclick = () => { currentLang = btn.dataset.lang; localStorage.setItem(LANG_KEY, currentLang); render(); }; });
 document.getElementById('keywordFilter').onchange = render;
 document.getElementById('statusFilter').onchange = render;
 document.getElementById('reloadBtn').onclick = load;
-
-applyStaticTexts();
-load();
+document.getElementById('composerClose').onclick = closeComposer;
+document.getElementById('composerModal').onclick = (e) => { if (e.target.id === 'composerModal') closeComposer(); };
+document.getElementById('photoInput').onchange = (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  document.getElementById('uploadBox').classList.add('has-file');
+  document.getElementById('uploadText').innerHTML = '<strong>' + escapeHtml(file.name) + '</strong>';
+  const reader = new FileReader();
+  reader.onload = async () => { try { composerState.photo = await loadImage(reader.result); await compose(); } catch (err) { showToast('Error loading image'); } };
+  reader.readAsDataURL(file);
+};
+document.querySelectorAll('#sloganPick label').forEach(lbl => {
+  lbl.onclick = () => { document.querySelectorAll('#sloganPick label').forEach(l => l.classList.remove('active')); lbl.classList.add('active'); composerState.slogan = lbl.querySelector('input').value; if (composerState.photo) compose(); };
+});
+document.getElementById('recomposeBtn').onclick = () => { if (composerState.photo) compose(); };
+document.getElementById('downloadBtn').onclick = downloadComposed;
+applyStaticTexts(); load();
 </script>
 </body>
 </html>
