@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🐾%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;600&family=Noto+Sans+Thai:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 :root { color-scheme: light; --green: #2D4226; --green-soft: #5C7A4F; --cream: #F5EFE6; --bg: #FAFAF7; --card: #fff; --border: #ECEAE3; --text: #1B2B1A; }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -223,14 +223,50 @@ function openComposer(row) {
 function closeComposer() { document.getElementById('composerModal').classList.remove('open'); composerState = { row: null, photo: null, slogan: 'en', format: 'square' }; }
 function loadImage(src) { return new Promise((res,rej) => { const img = new Image(); img.crossOrigin='anonymous'; img.onload=()=>res(img); img.onerror=rej; img.src=src; }); }
 function drawImageCover(ctx, img, x, y, w, h) { const r = Math.max(w/img.width, h/img.height); const dw = img.width*r, dh = img.height*r; ctx.drawImage(img, x+(w-dw)/2, y+(h-dh)/2, dw, dh); }
-function wrapLines(ctx, text, maxW) { const words = text.split(/\s+/); const lines = []; let line = ''; for (const w of words) { const test = line ? line+' '+w : w; if (ctx.measureText(test).width <= maxW) line = test; else { if (line) lines.push(line); line = w; } } if (line) lines.push(line); return lines; }
+function wrapLines(ctx, text, maxW) {
+  // 1) Tokenize. Use Intl.Segmenter when available — it knows how to break Thai into words.
+  let tokens;
+  try {
+    if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+      const seg = new Intl.Segmenter(undefined, { granularity: 'word' });
+      tokens = [...seg.segment(text)].map(s => s.segment);
+    } else {
+      tokens = text.split(/(\s+)/).filter(Boolean);
+    }
+  } catch (e) { tokens = text.split(/(\s+)/).filter(Boolean); }
+  // 2) Greedy wrap by tokens.
+  const lines = []; let line = '';
+  for (const tk of tokens) {
+    const test = line + tk;
+    if (!line || ctx.measureText(test).width <= maxW) { line = test; }
+    else { lines.push(line.trim()); line = /^\s+$/.test(tk) ? '' : tk; }
+  }
+  if (line.trim()) lines.push(line.trim());
+  // 3) Safety net: if any single line is still wider than maxW (e.g., one massive Thai run with no segmenter), break it by character.
+  const final = [];
+  for (const ln of lines) {
+    if (ctx.measureText(ln).width <= maxW) { final.push(ln); continue; }
+    let chunk = '';
+    for (const ch of ln) {
+      const test = chunk + ch;
+      if (!chunk || ctx.measureText(test).width <= maxW) chunk = test;
+      else { final.push(chunk); chunk = ch; }
+    }
+    if (chunk) final.push(chunk);
+  }
+  return final;
+}
 async function compose() {
   const { row, photo, slogan, format } = composerState; if (!row || !photo) return;
   const canvas = document.getElementById('previewCanvas');
   if (format === 'vertical') { canvas.width = 1080; canvas.height = 1920; } else { canvas.width = 1080; canvas.height = 1080; }
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
-  try { await document.fonts.load('800 80px "Playfair Display"'); await document.fonts.load('600 22px "Inter"'); } catch (e) {}
+  try {
+    await document.fonts.load('800 80px "Playfair Display"');
+    await document.fonts.load('600 22px "Inter"');
+    await document.fonts.load('700 60px "Noto Sans Thai"');
+  } catch (e) {}
   const isVertical = format === 'vertical';
   const photoH = Math.round(H * (isVertical ? 0.50 : 0.65));
   const panelY = photoH; const panelH = H - photoH;
