@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Platinum Briefs Manager</title>
+<meta name="theme-color" content="#2D4226">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🐾%3C/text%3E%3C/svg%3E">
+<style>
+:root { color-scheme: light; --green: #2D4226; --green-soft: #5C7A4F; --bg: #FAFAF7; --card: #fff; --border: #ECEAE3; --text: #1B2B1A; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+.container { max-width: 1200px; margin: 0 auto; padding: 12px; padding-bottom: env(safe-area-inset-bottom); }
+header { background: var(--green); color: #fff; padding: 18px 16px; margin: -12px -12px 16px; border-radius: 0 0 14px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+header h1 { margin: 0; font-size: 18px; font-weight: 700; }
+header .subtitle { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+.reload-btn { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); padding: 8px 12px; border-radius: 20px; font-size: 13px; cursor: pointer; font-family: inherit; }
+.reload-btn:active { background: rgba(255,255,255,0.25); }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
+.controls select { font: inherit; padding: 10px 14px; border-radius: 10px; border: 1px solid #D8D6CF; background: #fff; cursor: pointer; font-size: 14px; flex: 1 1 160px; min-width: 0; }
+.stats { font-size: 13px; padding: 8px 12px; background: #fff; border-radius: 10px; border: 1px solid var(--border); white-space: nowrap; }
+.badge-pending { background: #FFF3E0; color: #E65100; padding: 4px 10px; border-radius: 12px; font-weight: 600; font-size: 12px; }
+.badge-done { background: #E8F5E9; color: #1B5E20; padding: 4px 10px; border-radius: 12px; font-weight: 600; font-size: 12px; margin-left: 6px; }
+.grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+@media (min-width: 760px) { .grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1100px) { .grid { grid-template-columns: 1fr 1fr 1fr; } }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.card.published { opacity: 0.55; }
+.card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.kw { font-weight: 700; font-size: 15px; color: var(--green); }
+.kw .th { display: block; font-size: 12px; color: #777; font-weight: 500; margin-top: 2px; }
+.date { font-size: 11px; color: #888; white-space: nowrap; }
+.slogan { font-size: 14px; font-style: italic; color: #444; border-left: 3px solid var(--green-soft); padding: 4px 10px; background: #F5F8F2; border-radius: 0 6px 6px 0; }
+.section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--green); letter-spacing: 0.5px; }
+.brief-preview { font-size: 12px; color: #555; max-height: 90px; overflow: hidden; position: relative; white-space: pre-wrap; background: var(--bg); border-radius: 8px; padding: 10px; border: 1px solid var(--border); }
+.brief-preview.expanded { max-height: none; }
+.brief-preview:not(.expanded)::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 34px; background: linear-gradient(to bottom, transparent, var(--bg)); pointer-events: none; }
+.toggle-expand { font-size: 11px; background: none; border: none; color: var(--green-soft); cursor: pointer; padding: 0; text-decoration: underline; align-self: flex-start; font-family: inherit; }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.actions button { font: inherit; font-size: 13px; font-weight: 600; padding: 11px 8px; border-radius: 10px; border: 1px solid transparent; cursor: pointer; transition: all 0.15s; }
+.btn-primary { background: var(--green); color: #fff; grid-column: 1 / -1; }
+.btn-primary:active { background: #3A5430; transform: scale(0.98); }
+.btn-secondary { background: #F5F8F2; color: var(--green); border-color: #D6E0CB; }
+.btn-secondary:active { background: #E8F1DB; transform: scale(0.98); }
+.btn-publish { background: #FFF3E0; color: #E65100; border-color: #FFE0B2; grid-column: 1 / -1; }
+.btn-publish:active { transform: scale(0.98); }
+.card.published .btn-publish { background: #E8F5E9; color: #1B5E20; border-color: #C8E6C9; }
+.empty, .loading { text-align: center; padding: 50px 16px; color: #777; font-size: 14px; }
+.error { background: #FFEBEE; color: #B71C1C; padding: 14px; border-radius: 10px; font-size: 13px; margin: 12px 0; border: 1px solid #FFCDD2; }
+.error code { background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+.toast { position: fixed; bottom: calc(24px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: #1B2B1A; color: #fff; padding: 12px 20px; border-radius: 24px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 16px rgba(0,0,0,0.25); opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 100; }
+.toast.show { opacity: 1; }
+.spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.footer-link { display: inline-block; margin: 16px 0; color: var(--green-soft); text-decoration: none; font-size: 12px; border-bottom: 1px dashed currentColor; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1>🐾 Platinum Briefs</h1>
+      <div class="subtitle">Borradores listos para publicar</div>
+    </div>
+    <button class="reload-btn" id="reloadBtn">↻ Recargar</button>
+  </header>
+
+  <div class="controls">
+    <select id="keywordFilter" aria-label="Filtrar por keyword">
+      <option value="">Todas las keywords</option>
+    </select>
+    <select id="statusFilter" aria-label="Filtrar por estado">
+      <option value="pending">Solo pendientes</option>
+      <option value="all">Todos</option>
+      <option value="published">Solo publicados</option>
+    </select>
+    <span class="stats" id="stats">…</span>
+  </div>
+
+  <div id="content">
+    <div class="loading">
+      <div class="spinner"></div>
+      Leyendo borradores del Sheet…
+    </div>
+  </div>
+
+  <a class="footer-link" href="https://docs.google.com/spreadsheets/d/1EtoZTnP9P_NLMm_LuKyxYmMDXgvUHZTISRJvGtgc1rU" target="_blank" rel="noopener">
+    Abrir Sheet completo ↗
+  </a>
+</div>
+
+<div class="toast" id="toast">Copiado</div>
+
+<script>
+const SPREADSHEET_ID = '1EtoZTnP9P_NLMm_LuKyxYmMDXgvUHZTISRJvGtgc1rU';
+const SHEET_NAME = 'Borradores';
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
+const STORAGE_KEY = 'platinum_published_v1';
+
+let allRows = [];
+let publishedSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [];
+  let field = '';
+  let inQuotes = false;
+  let i = 0;
+  while (i < text.length) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i += 2; continue; }
+        inQuotes = false; i++;
+      } else { field += c; i++; }
+    } else {
+      if (c === '"') { inQuotes = true; i++; }
+      else if (c === ',') { row.push(field); field = ''; i++; }
+      else if (c === '\r') { i++; }
+      else if (c === '\n') {
+        row.push(field); rows.push(row);
+        row = []; field = ''; i++;
+      } else { field += c; i++; }
+    }
+  }
+  if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
+  return rows;
+}
+
+function rowsToObjects(rows) {
+  if (rows.length < 2) return [];
+  const headers = rows[0].map(h => h.trim());
+  return rows.slice(1).filter(r => r.some(c => c && c.trim())).map(r => {
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = (r[i] || '').trim());
+    return obj;
+  });
+}
+
+function extractFromBrief(brief) {
+  let caption = '';
+  const captionMatch = brief.match(/CAPTION LISTO PARA COPIAR[^:]*:\s*([\s\S]*?)(?=HASHTAGS|━|$)/);
+  if (captionMatch) caption = captionMatch[1].trim();
+  let hashtags = '';
+  const hashMatch = brief.match(/HASHTAGS[^:]*:\s*([\s\S]*?)(?=━|ADJUNTO|$)/);
+  if (hashMatch) hashtags = hashMatch[1].trim();
+  return { caption, hashtags };
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1600);
+}
+
+function copyText(text, label) {
+  if (!text) { showToast('Vacío, nada que copiar'); return; }
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text)
+      .then(() => showToast('✓ ' + (label || 'Copiado')))
+      .catch(() => fallbackCopy(text, label));
+  } else {
+    fallbackCopy(text, label);
+  }
+}
+function fallbackCopy(text, label) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); showToast('✓ ' + (label || 'Copiado')); }
+  catch { showToast('Error al copiar'); }
+  document.body.removeChild(ta);
+}
+
+function togglePublished(id) {
+  if (publishedSet.has(id)) publishedSet.delete(id);
+  else publishedSet.add(id);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...publishedSet]));
+  render();
+}
+
+function isPublished(row) {
+  return publishedSet.has(row.id) || row.status === 'Publicado';
+}
+
+function escapeHtml(s) {
+  if (!s) return '';
+  return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+function renderCard(row) {
+  const card = document.createElement('div');
+  card.className = 'card' + (isPublished(row) ? ' published' : '');
+
+  const { caption, hashtags } = extractFromBrief(row.brief);
+  const captionPlusHashtags = caption + (hashtags ? '\n\n' + hashtags : '');
+
+  card.innerHTML = `
+    <div class="card-head">
+      <div class="kw">
+        ${escapeHtml(row.keyword_en)}
+        <span class="th">${escapeHtml(row.keyword_th)}</span>
+      </div>
+      <div class="date">${escapeHtml(row.fecha)}</div>
+    </div>
+    ${row.slogan_en ? `<div class="slogan">"${escapeHtml(row.slogan_en)}"</div>` : ''}
+    <div class="section-title">Brief para ChatGPT + Canva</div>
+    <div class="brief-preview">${escapeHtml(row.brief)}</div>
+    <button class="toggle-expand">Ver más</button>
+    <div class="actions">
+      <button class="btn-primary" data-a="brief">📋 Copiar BRIEF completo</button>
+      <button class="btn-secondary" data-a="caption">Copiar caption</button>
+      <button class="btn-secondary" data-a="hashtags">Copiar hashtags</button>
+      <button class="btn-publish" data-a="publish">
+        ${isPublished(row) ? '✓ Marcado como publicado' : '○ Marcar como publicado'}
+      </button>
+    </div>
+  `;
+
+  card.querySelector('.toggle-expand').onclick = (e) => {
+    const p = card.querySelector('.brief-preview');
+    const exp = p.classList.toggle('expanded');
+    e.target.textContent = exp ? 'Ver menos' : 'Ver más';
+  };
+  card.querySelector('[data-a="brief"]').onclick = () => copyText(row.brief, 'Brief copiado');
+  card.querySelector('[data-a="caption"]').onclick = () => copyText(captionPlusHashtags || row.ig_caption_en, 'Caption + hashtags copiados');
+  card.querySelector('[data-a="hashtags"]').onclick = () => copyText(hashtags || row.hashtags, 'Hashtags copiados');
+  card.querySelector('[data-a="publish"]').onclick = () => togglePublished(row.id);
+  return card;
+}
+
+function parseDate(s) {
+  const m = (s || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})(?: (\d{1,2}):(\d{2}))?/);
+  if (!m) return 0;
+  return new Date(+m[3], +m[2] - 1, +m[1], +(m[4]||0), +(m[5]||0)).getTime();
+}
+
+function render() {
+  const kwFilter = document.getElementById('keywordFilter').value;
+  const stFilter = document.getElementById('statusFilter').value;
+
+  let filtered = allRows.slice();
+  if (kwFilter) filtered = filtered.filter(r => r.keyword_en === kwFilter);
+  if (stFilter === 'pending') filtered = filtered.filter(r => !isPublished(r));
+  else if (stFilter === 'published') filtered = filtered.filter(r => isPublished(r));
+
+  filtered.sort((a, b) => parseDate(b.fecha) - parseDate(a.fecha));
+
+  const totalPending = allRows.filter(r => !isPublished(r)).length;
+  const totalDone = allRows.length - totalPending;
+  document.getElementById('stats').innerHTML =
+    `<span class="badge-pending">${totalPending}</span><span class="badge-done">${totalDone}</span>`;
+
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  if (filtered.length === 0) {
+    content.innerHTML = '<div class="empty">No hay borradores que coincidan con el filtro.</div>';
+    return;
+  }
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+  filtered.forEach(r => grid.appendChild(renderCard(r)));
+  content.appendChild(grid);
+}
+
+function populateKeywordFilter() {
+  const set = new Set(allRows.map(r => r.keyword_en).filter(Boolean));
+  const sel = document.getElementById('keywordFilter');
+  while (sel.options.length > 1) sel.remove(1);
+  [...set].sort().forEach(kw => {
+    const opt = document.createElement('option');
+    opt.value = kw; opt.textContent = kw;
+    sel.appendChild(opt);
+  });
+}
+
+async function load() {
+  document.getElementById('content').innerHTML = '<div class="loading"><div class="spinner"></div>Leyendo borradores del Sheet…</div>';
+  try {
+    const resp = await fetch(CSV_URL + '&t=' + Date.now(), { redirect: 'follow' });
+    if (!resp.ok) {
+      throw new Error(`HTTP ${resp.status}. ¿Está el Sheet compartido como "Cualquiera con el enlace"?`);
+    }
+    const text = await resp.text();
+    if (text.trim().startsWith('<') || text.includes('<HTML>')) {
+      throw new Error('Google devolvió HTML en lugar de CSV. Probablemente el Sheet no está público. Abre el Sheet → Compartir → cambia el acceso a "Cualquiera con el enlace".');
+    }
+    const rows = parseCSV(text);
+    const objs = rowsToObjects(rows);
+    allRows = objs.map(o => ({
+      id: (o.fecha || '') + '|' + (o.keyword_en || ''),
+      fecha: o.fecha || '',
+      keyword_th: o.keyword_th || '',
+      keyword_en: o.keyword_en || '',
+      slogan_th: o.slogan_th || '',
+      slogan_en: o.slogan_en || '',
+      fb_post_en: o.fb_post_en || '',
+      ig_caption_en: o.ig_caption_en || '',
+      hashtags: o.hashtags || '',
+      image_concept: o.image_concept || '',
+      imagen_url: o.imagen_url || '',
+      status: o.status || '',
+      brief: o.brief_chatgpt || '',
+    })).filter(r => r.fecha && r.brief);
+
+    populateKeywordFilter();
+    render();
+  } catch (err) {
+    document.getElementById('content').innerHTML =
+      `<div class="error"><b>No se pudo leer el Sheet</b><br><br>${escapeHtml(err.message || String(err))}<br><br>
+      <b>Solución:</b> abre el Sheet, pulsa <code>Compartir</code> arriba a la derecha, en "Acceso general" cambia de "Restringido" a <code>Cualquiera con el enlace</code> (rol: Lector). Luego recarga esta página.</div>`;
+  }
+}
+
+document.getElementById('keywordFilter').onchange = render;
+document.getElementById('statusFilter').onchange = render;
+document.getElementById('reloadBtn').onclick = load;
+
+load();
+</script>
+</body>
+</html>
