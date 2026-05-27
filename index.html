@@ -35,7 +35,9 @@ header { background: var(--green); color: #fff; padding: 16px; margin: -12px -12
 .kw { font-weight: 700; font-size: 15px; color: var(--green); }
 .kw .th { display: block; font-size: 12px; color: #777; font-weight: 500; margin-top: 2px; }
 .date { font-size: 11px; color: #888; white-space: nowrap; }
+.slogans { display: flex; flex-direction: column; gap: 6px; }
 .slogan { font-size: 14px; font-style: italic; color: #444; border-left: 3px solid var(--green-soft); padding: 4px 10px; background: #F5F8F2; border-radius: 0 6px 6px 0; }
+.slogan .lang-tag { display: inline-block; font-style: normal; font-size: 9px; font-weight: 700; background: var(--green-soft); color: #fff; padding: 1px 5px; border-radius: 4px; margin-right: 6px; vertical-align: middle; letter-spacing: 0.5px; }
 .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--green); letter-spacing: 0.5px; }
 .brief-preview { font-size: 12px; color: #555; max-height: 90px; overflow: hidden; position: relative; white-space: pre-wrap; background: var(--bg); border-radius: 8px; padding: 10px; border: 1px solid var(--border); }
 .brief-preview.expanded { max-height: none; }
@@ -47,6 +49,7 @@ header { background: var(--green); color: #fff; padding: 16px; margin: -12px -12
 .btn-primary:active { background: #3A5430; transform: scale(0.98); }
 .btn-secondary { background: #F5F8F2; color: var(--green); border-color: #D6E0CB; }
 .btn-secondary:active { background: #E8F1DB; transform: scale(0.98); }
+.btn-full { grid-column: 1 / -1; }
 .btn-publish { background: #FFF3E0; color: #E65100; border-color: #FFE0B2; grid-column: 1 / -1; }
 .btn-publish:active { transform: scale(0.98); }
 .card.published .btn-publish { background: #E8F5E9; color: #1B5E20; border-color: #C8E6C9; }
@@ -79,9 +82,7 @@ html[lang="th"] body { font-family: "Noto Sans Thai", -apple-system, BlinkMacSys
   </header>
 
   <div class="controls">
-    <select id="keywordFilter" aria-label="Keyword filter">
-      <option value="">…</option>
-    </select>
+    <select id="keywordFilter" aria-label="Keyword filter"><option value="">…</option></select>
     <select id="statusFilter" aria-label="Status filter">
       <option value="pending">…</option>
       <option value="all">…</option>
@@ -111,10 +112,15 @@ const I18N = {
     subtitle: "Borradores listos para publicar", reload: "Recargar", allKeywords: "Todas las keywords",
     pendingOnly: "Solo pendientes", allStatus: "Todos", publishedOnly: "Solo publicados",
     briefSection: "Brief para ChatGPT + Canva", seeMore: "Ver más", seeLess: "Ver menos",
-    copyBrief: "📋 Copiar BRIEF completo", copyCaption: "Copiar caption", copyHashtags: "Copiar hashtags",
+    copyBrief: "📋 Copiar BRIEF completo",
+    copyCaptionEn: "🇬🇧 Copiar caption EN", copyCaptionTh: "🇹🇭 Copiar caption TH",
+    copyHashtags: "# Copiar hashtags",
     markPublished: "○ Marcar como publicado", isPublished: "✓ Marcado como publicado",
     noMatch: "No hay borradores que coincidan con el filtro.", loading: "Leyendo borradores del Sheet…",
-    briefCopied: "Brief copiado", captionCopied: "Caption + hashtags copiados", hashtagsCopied: "Hashtags copiados",
+    briefCopied: "Brief copiado",
+    captionEnCopied: "Caption EN + hashtags copiados",
+    captionThCopied: "Caption TH + hashtags copiados",
+    hashtagsCopied: "Hashtags copiados",
     nothingToCopy: "Vacío, nada que copiar", copyError: "Error al copiar",
     errorTitle: "No se pudo leer el Sheet",
     errorFix: "Solución: abre el Sheet, pulsa Compartir arriba a la derecha, cambia Acceso general a \"Cualquiera con el enlace\" (rol: Lector). Luego recarga esta página.",
@@ -126,10 +132,15 @@ const I18N = {
     subtitle: "Drafts ready to publish", reload: "Reload", allKeywords: "All keywords",
     pendingOnly: "Pending only", allStatus: "All", publishedOnly: "Published only",
     briefSection: "Brief for ChatGPT + Canva", seeMore: "See more", seeLess: "See less",
-    copyBrief: "📋 Copy full BRIEF", copyCaption: "Copy caption", copyHashtags: "Copy hashtags",
+    copyBrief: "📋 Copy full BRIEF",
+    copyCaptionEn: "🇬🇧 Copy caption EN", copyCaptionTh: "🇹🇭 Copy caption TH",
+    copyHashtags: "# Copy hashtags",
     markPublished: "○ Mark as published", isPublished: "✓ Marked as published",
     noMatch: "No drafts match the filter.", loading: "Reading drafts from the Sheet…",
-    briefCopied: "Brief copied", captionCopied: "Caption + hashtags copied", hashtagsCopied: "Hashtags copied",
+    briefCopied: "Brief copied",
+    captionEnCopied: "EN caption + hashtags copied",
+    captionThCopied: "TH caption + hashtags copied",
+    hashtagsCopied: "Hashtags copied",
     nothingToCopy: "Empty, nothing to copy", copyError: "Copy error",
     errorTitle: "Couldn't read the Sheet",
     errorFix: "Fix: open the Sheet, click Share at the top right, change General access to \"Anyone with the link\" (role: Viewer). Then reload this page.",
@@ -141,10 +152,15 @@ const I18N = {
     subtitle: "ฉบับร่างพร้อมเผยแพร่", reload: "รีโหลด", allKeywords: "คีย์เวิร์ดทั้งหมด",
     pendingOnly: "เฉพาะที่รอ", allStatus: "ทั้งหมด", publishedOnly: "เฉพาะที่เผยแพร่แล้ว",
     briefSection: "บรีฟสำหรับ ChatGPT + Canva", seeMore: "ดูเพิ่ม", seeLess: "ดูน้อยลง",
-    copyBrief: "📋 คัดลอกบรีฟทั้งหมด", copyCaption: "คัดลอกแคปชั่น", copyHashtags: "คัดลอกแฮชแท็ก",
+    copyBrief: "📋 คัดลอกบรีฟทั้งหมด",
+    copyCaptionEn: "🇬🇧 คัดลอกแคปชั่น EN", copyCaptionTh: "🇹🇭 คัดลอกแคปชั่น TH",
+    copyHashtags: "# คัดลอกแฮชแท็ก",
     markPublished: "○ ทำเครื่องหมายว่าเผยแพร่", isPublished: "✓ ทำเครื่องหมายแล้ว",
     noMatch: "ไม่พบฉบับร่างที่ตรงกับตัวกรอง", loading: "กำลังอ่านฉบับร่างจาก Sheet…",
-    briefCopied: "คัดลอกบรีฟแล้ว", captionCopied: "คัดลอกแคปชั่น + แฮชแท็กแล้ว", hashtagsCopied: "คัดลอกแฮชแท็กแล้ว",
+    briefCopied: "คัดลอกบรีฟแล้ว",
+    captionEnCopied: "คัดลอกแคปชั่น EN + แฮชแท็กแล้ว",
+    captionThCopied: "คัดลอกแคปชั่น TH + แฮชแท็กแล้ว",
+    hashtagsCopied: "คัดลอกแฮชแท็กแล้ว",
     nothingToCopy: "ว่างเปล่า ไม่มีอะไรให้คัดลอก", copyError: "ข้อผิดพลาดในการคัดลอก",
     errorTitle: "ไม่สามารถอ่าน Sheet ได้",
     errorFix: "วิธีแก้: เปิด Sheet กดปุ่ม Share มุมบนขวา เปลี่ยน General access เป็น \"Anyone with the link\" (สิทธิ์: Viewer) จากนั้นรีโหลดหน้านี้",
@@ -190,14 +206,9 @@ function rowsToObjects(rows) {
   });
 }
 
-function extractFromBrief(brief) {
-  let caption = '';
-  const captionMatch = brief.match(/CAPTION[^:]*:\s*([\s\S]*?)(?=HASHTAGS|━|$)/i);
-  if (captionMatch) caption = captionMatch[1].trim();
-  let hashtags = '';
-  const hashMatch = brief.match(/HASHTAGS[^:]*:\s*([\s\S]*?)(?=━|ADJUNTO|ATTACHED|$)/i);
-  if (hashMatch) hashtags = hashMatch[1].trim();
-  return { caption, hashtags };
+function extractHashtagsFromBrief(brief) {
+  const m = brief.match(/HASHTAGS[^:]*:\s*([\s\S]*?)(?=━|ADJUNTO|ATTACHED|$)/i);
+  return m ? m[1].trim() : '';
 }
 
 function pickBrief(row) {
@@ -205,11 +216,6 @@ function pickBrief(row) {
   if (currentLang === 'en' && row.brief_en) return row.brief_en;
   if (currentLang === 'th' && row.brief_th) return row.brief_th;
   return row.brief;
-}
-
-function pickCaption(row) {
-  if (currentLang === 'th') return row.ig_caption_th || row.ig_caption_en;
-  return row.ig_caption_en || row.ig_caption_th;
 }
 
 function showToast(msg) {
@@ -247,11 +253,20 @@ function renderCard(row) {
   const card = document.createElement('div');
   card.className = 'card' + (isPublished(row) ? ' published' : '');
   const brief = pickBrief(row);
-  const { caption, hashtags } = extractFromBrief(brief);
-  const langCaption = pickCaption(row);
-  const finalCaption = caption || langCaption || '';
-  const captionPlusHashtags = finalCaption + (hashtags ? '\n\n' + hashtags : (row.hashtags ? '\n\n' + row.hashtags : ''));
-  const finalHashtags = hashtags || row.hashtags || '';
+  const briefHashtags = extractHashtagsFromBrief(brief);
+  const finalHashtags = briefHashtags || row.hashtags || '';
+
+  const captionEn = row.ig_caption_en || row.fb_post_en || '';
+  const captionTh = row.ig_caption_th || row.fb_post_th || '';
+  const captionEnPlus = captionEn + (finalHashtags ? '\n\n' + finalHashtags : '');
+  const captionThPlus = captionTh + (finalHashtags ? '\n\n' + finalHashtags : '');
+
+  const slogansHtml = `
+    <div class="slogans">
+      ${row.slogan_en ? `<div class="slogan"><span class="lang-tag">EN</span>"${escapeHtml(row.slogan_en)}"</div>` : ''}
+      ${row.slogan_th ? `<div class="slogan"><span class="lang-tag">TH</span>"${escapeHtml(row.slogan_th)}"</div>` : ''}
+    </div>
+  `;
 
   card.innerHTML = `
     <div class="card-head">
@@ -261,14 +276,15 @@ function renderCard(row) {
       </div>
       <div class="date">${escapeHtml(row.fecha)}</div>
     </div>
-    ${row.slogan_en ? `<div class="slogan">"${escapeHtml(row.slogan_en)}"</div>` : ''}
+    ${slogansHtml}
     <div class="section-title">${escapeHtml(t('briefSection'))}</div>
     <div class="brief-preview">${escapeHtml(brief)}</div>
     <button class="toggle-expand">${escapeHtml(t('seeMore'))}</button>
     <div class="actions">
       <button class="btn-primary" data-a="brief">${escapeHtml(t('copyBrief'))}</button>
-      <button class="btn-secondary" data-a="caption">${escapeHtml(t('copyCaption'))}</button>
-      <button class="btn-secondary" data-a="hashtags">${escapeHtml(t('copyHashtags'))}</button>
+      <button class="btn-secondary" data-a="caption-en">${escapeHtml(t('copyCaptionEn'))}</button>
+      <button class="btn-secondary" data-a="caption-th">${escapeHtml(t('copyCaptionTh'))}</button>
+      <button class="btn-secondary btn-full" data-a="hashtags">${escapeHtml(t('copyHashtags'))}</button>
       <button class="btn-publish" data-a="publish">${escapeHtml(isPublished(row) ? t('isPublished') : t('markPublished'))}</button>
     </div>
   `;
@@ -279,7 +295,8 @@ function renderCard(row) {
     e.target.textContent = exp ? t('seeLess') : t('seeMore');
   };
   card.querySelector('[data-a="brief"]').onclick = () => copyText(brief, t('briefCopied'));
-  card.querySelector('[data-a="caption"]').onclick = () => copyText(captionPlusHashtags, t('captionCopied'));
+  card.querySelector('[data-a="caption-en"]').onclick = () => copyText(captionEnPlus, t('captionEnCopied'));
+  card.querySelector('[data-a="caption-th"]').onclick = () => copyText(captionThPlus, t('captionThCopied'));
   card.querySelector('[data-a="hashtags"]').onclick = () => copyText(finalHashtags, t('hashtagsCopied'));
   card.querySelector('[data-a="publish"]').onclick = () => togglePublished(row.id);
   return card;
@@ -295,7 +312,6 @@ function applyStaticTexts() {
   document.documentElement.lang = currentLang;
   document.getElementById('subtitle').textContent = t('subtitle');
   document.getElementById('reloadBtn').textContent = '↻ ' + t('reload');
- 
   document.getElementById('openSheetLink').textContent = t('openSheet');
   const kwSel = document.getElementById('keywordFilter');
   if (kwSel.options.length > 0) kwSel.options[0].textContent = t('allKeywords');
