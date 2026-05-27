@@ -295,7 +295,7 @@ function applyStaticTexts() {
   document.documentElement.lang = currentLang;
   document.getElementById('subtitle').textContent = t('subtitle');
   document.getElementById('reloadBtn').textContent = '↻ ' + t('reload');
-  document.getElementById('loadingText').textContent = t('loading');
+ 
   document.getElementById('openSheetLink').textContent = t('openSheet');
   const kwSel = document.getElementById('keywordFilter');
   if (kwSel.options.length > 0) kwSel.options[0].textContent = t('allKeywords');
