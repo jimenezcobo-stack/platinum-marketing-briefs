@@ -8,7 +8,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🐾%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,800;1,800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root { color-scheme: light; --green: #2D4226; --green-soft: #5C7A4F; --cream: #F5EFE6; --bg: #FAFAF7; --card: #fff; --border: #ECEAE3; --text: #1B2B1A; }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -203,62 +203,44 @@ function closeComposer() { document.getElementById('composerModal').classList.re
 function loadImage(src) { return new Promise((res,rej) => { const img = new Image(); img.crossOrigin='anonymous'; img.onload=()=>res(img); img.onerror=rej; img.src=src; }); }
 function drawImageCover(ctx, img, x, y, w, h) { const r = Math.max(w/img.width, h/img.height); const dw = img.width*r, dh = img.height*r; ctx.drawImage(img, x+(w-dw)/2, y+(h-dh)/2, dw, dh); }
 function wrapLines(ctx, text, maxW) { const words = text.split(/\s+/); const lines = []; let line = ''; for (const w of words) { const test = line ? line+' '+w : w; if (ctx.measureText(test).width <= maxW) line = test; else { if (line) lines.push(line); line = w; } } if (line) lines.push(line); return lines; }
-function roundRect(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r); ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h); ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r); ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath(); }
 async function compose() {
   const { row, photo, slogan } = composerState; if (!row || !photo) return;
   const canvas = document.getElementById('previewCanvas'); const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
-  try { await document.fonts.load('800 80px "Playfair Display"'); await document.fonts.load('italic 800 80px "Playfair Display"'); await document.fonts.load('600 22px "Inter"'); } catch (e) {}
-  ctx.fillStyle = '#000'; ctx.fillRect(0,0,W,H);
-  drawImageCover(ctx, photo, 0, 0, W, H);
-  const vign = ctx.createRadialGradient(W/2, H/2, W*0.35, W/2, H/2, W*0.78);
-  vign.addColorStop(0, 'rgba(0,0,0,0)'); vign.addColorStop(1, 'rgba(0,0,0,0.30)');
-  ctx.fillStyle = vign; ctx.fillRect(0,0,W,H);
-  const gH = Math.round(H * 0.58);
-  const grad = ctx.createLinearGradient(0, H-gH, 0, H);
-  grad.addColorStop(0, 'rgba(27,43,26,0)'); grad.addColorStop(0.3, 'rgba(27,43,26,0.4)'); grad.addColorStop(0.7, 'rgba(27,43,26,0.88)'); grad.addColorStop(1, 'rgba(27,43,26,0.98)');
-  ctx.fillStyle = grad; ctx.fillRect(0, H-gH, W, gH);
-  const logoImg = await loadImage(logoDataURL('%23FFFFFF'));
-  const logoMaxW = Math.round(W * 0.20); const logoRatio = logoImg.height / logoImg.width;
+  try { await document.fonts.load('800 80px "Playfair Display"'); await document.fonts.load('600 22px "Inter"'); } catch (e) {}
+  const photoH = Math.round(H * 0.65); const panelY = photoH; const panelH = H - photoH;
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, photoH);
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, photoH); ctx.clip();
+  drawImageCover(ctx, photo, 0, 0, W, photoH); ctx.restore();
+  ctx.fillStyle = '#F5EFE6'; ctx.fillRect(0, panelY, W, panelH);
+  ctx.fillStyle = '#2D4226'; ctx.fillRect(0, panelY, W, 4);
+  const logoImg = await loadImage(logoDataURL('%232D4226'));
+  const logoMaxW = Math.round(W * 0.22); const logoRatio = logoImg.height / logoImg.width;
   const logoW = logoMaxW; const logoH = logoMaxW * logoRatio;
-  ctx.save(); ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=18; ctx.shadowOffsetY=3;
-  ctx.drawImage(logoImg, 60, 60, logoW, logoH); ctx.restore();
-  const plateMargin = 60; const plateY = H - 420; const plateH = 340;
-  ctx.save();
-  ctx.fillStyle = 'rgba(27,43,26,0.35)';
-  roundRect(ctx, plateMargin, plateY, W - plateMargin*2, plateH, 18); ctx.fill();
-  ctx.strokeStyle = 'rgba(255,255,255,0.14)'; ctx.lineWidth = 1.5;
-  roundRect(ctx, plateMargin, plateY, W - plateMargin*2, plateH, 18); ctx.stroke();
-  ctx.restore();
+  const logoX = (W - logoW) / 2; const logoY = panelY + 40;
+  ctx.drawImage(logoImg, logoX, logoY, logoW, logoH);
   const sloganText = slogan === 'th' ? (row.slogan_th || row.slogan_en) : (row.slogan_en || row.slogan_th);
   const isThai = slogan === 'th';
   const sloganFont = isThai ? '"Noto Sans Thai", sans-serif' : '"Playfair Display", serif';
-  const sloganStyle = isThai ? '' : 'italic ';
   const sloganWeight = isThai ? '700' : '800';
-  const sloganMaxW = W - (plateMargin*2 + 80);
-  let fontSize = isThai ? 62 : 76; let lines = [];
-  while (fontSize > 28) {
-    ctx.font = `${sloganStyle}${sloganWeight} ${fontSize}px ${sloganFont}`;
-    lines = wrapLines(ctx, '"' + sloganText + '"', sloganMaxW);
-    const totalH = lines.length * fontSize * 1.15;
-    if (lines.length <= 3 && totalH < plateH - 110) break;
-    fontSize -= 4;
-  }
-  ctx.font = `${sloganStyle}${sloganWeight} ${fontSize}px ${sloganFont}`;
-  ctx.fillStyle = '#FFFFFF'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
-  const totalSloganH = lines.length * fontSize * 1.15;
-  let cy = plateY + (plateH - totalSloganH - 60) / 2 + fontSize;
-  for (const ln of lines) { ctx.fillText(ln, W/2, cy); cy += fontSize * 1.15; }
-  const dividerY = plateY + plateH - 58;
-  ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.moveTo(W/2 - 30, dividerY); ctx.lineTo(W/2 + 30, dividerY); ctx.stroke();
+  const sloganMaxW = W - 140;
+  const sloganAreaTop = logoY + logoH + 30;
+  const sloganAreaBottom = panelY + panelH - 75;
+  const sloganAreaH = sloganAreaBottom - sloganAreaTop;
+  let fontSize = isThai ? 56 : 64; let lines = [];
+  while (fontSize > 26) { ctx.font = `${sloganWeight} ${fontSize}px ${sloganFont}`; lines = wrapLines(ctx, sloganText, sloganMaxW); const totalH = lines.length * fontSize * 1.2; if (lines.length <= 3 && totalH < sloganAreaH - 10) break; fontSize -= 3; }
+  ctx.font = `${sloganWeight} ${fontSize}px ${sloganFont}`;
+  ctx.fillStyle = '#2D4226'; ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic';
+  const totalSloganH = lines.length * fontSize * 1.2;
+  let cy = sloganAreaTop + (sloganAreaH - totalSloganH) / 2 + fontSize;
+  for (const ln of lines) { ctx.fillText(ln, W / 2, cy); cy += fontSize * 1.2; }
   ctx.font = '600 18px "Inter", sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,0.92)';
-  const urlText = BRAND_URL.toUpperCase(); const ls = 4;
+  ctx.fillStyle = '#5C7A4F';
+  const urlText = BRAND_URL.toUpperCase(); const ls = 3;
   ctx.textAlign = 'left';
   let urlWidth = 0; for (const ch of urlText) urlWidth += ctx.measureText(ch).width + ls; urlWidth -= ls;
-  let urlX = (W - urlWidth) / 2;
-  for (const ch of urlText) { ctx.fillText(ch, urlX, dividerY + 28); urlX += ctx.measureText(ch).width + ls; }
+  let urlX = (W - urlWidth) / 2; const urlY = panelY + panelH - 35;
+  for (const ch of urlText) { ctx.fillText(ch, urlX, urlY); urlX += ctx.measureText(ch).width + ls; }
   document.getElementById('previewPlaceholder').style.display = 'none';
   document.getElementById('downloadBtn').disabled = false;
   document.getElementById('recomposeBtn').disabled = false;
