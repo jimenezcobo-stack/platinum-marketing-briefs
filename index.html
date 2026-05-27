@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -9,18 +9,23 @@
 <style>
 :root { color-scheme: light; --green: #2D4226; --green-soft: #5C7A4F; --bg: #FAFAF7; --card: #fff; --border: #ECEAE3; --text: #1B2B1A; }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Sukhumvit Set", "Noto Sans Thai", sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
 .container { max-width: 1200px; margin: 0 auto; padding: 12px; padding-bottom: env(safe-area-inset-bottom); }
-header { background: var(--green); color: #fff; padding: 18px 16px; margin: -12px -12px 16px; border-radius: 0 0 14px 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-header h1 { margin: 0; font-size: 18px; font-weight: 700; }
-header .subtitle { font-size: 12px; opacity: 0.85; margin-top: 2px; }
-.reload-btn { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); padding: 8px 12px; border-radius: 20px; font-size: 13px; cursor: pointer; font-family: inherit; }
+header { background: var(--green); color: #fff; padding: 16px; margin: -12px -12px 16px; border-radius: 0 0 14px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.header-title { flex: 1 1 auto; min-width: 0; }
+.header-title h1 { margin: 0; font-size: 18px; font-weight: 700; }
+.header-title .subtitle { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+.header-actions { display: flex; gap: 6px; align-items: center; }
+.lang-switch { display: flex; background: rgba(255,255,255,0.12); border-radius: 16px; padding: 3px; }
+.lang-btn { background: transparent; color: #fff; border: none; padding: 5px 9px; font-size: 11px; font-weight: 700; border-radius: 14px; cursor: pointer; font-family: inherit; letter-spacing: 0.5px; transition: background 0.15s; }
+.lang-btn.active { background: rgba(255,255,255,0.85); color: var(--green); }
+.reload-btn { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); padding: 7px 11px; border-radius: 18px; font-size: 12px; cursor: pointer; font-family: inherit; white-space: nowrap; }
 .reload-btn:active { background: rgba(255,255,255,0.25); }
 .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
 .controls select { font: inherit; padding: 10px 14px; border-radius: 10px; border: 1px solid #D8D6CF; background: #fff; cursor: pointer; font-size: 14px; flex: 1 1 160px; min-width: 0; }
-.stats { font-size: 13px; padding: 8px 12px; background: #fff; border-radius: 10px; border: 1px solid var(--border); white-space: nowrap; }
+.stats { font-size: 13px; padding: 8px 12px; background: #fff; border-radius: 10px; border: 1px solid var(--border); white-space: nowrap; display: flex; gap: 6px; align-items: center; }
 .badge-pending { background: #FFF3E0; color: #E65100; padding: 4px 10px; border-radius: 12px; font-weight: 600; font-size: 12px; }
-.badge-done { background: #E8F5E9; color: #1B5E20; padding: 4px 10px; border-radius: 12px; font-weight: 600; font-size: 12px; margin-left: 6px; }
+.badge-done { background: #E8F5E9; color: #1B5E20; padding: 4px 10px; border-radius: 12px; font-weight: 600; font-size: 12px; }
 .grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
 @media (min-width: 760px) { .grid { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 1100px) { .grid { grid-template-columns: 1fr 1fr 1fr; } }
@@ -53,74 +58,122 @@ header .subtitle { font-size: 12px; opacity: 0.85; margin-top: 2px; }
 .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .footer-link { display: inline-block; margin: 16px 0; color: var(--green-soft); text-decoration: none; font-size: 12px; border-bottom: 1px dashed currentColor; }
+html[lang="th"] body { font-family: "Noto Sans Thai", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <div>
+    <div class="header-title">
       <h1>🐾 Platinum Briefs</h1>
-      <div class="subtitle">Borradores listos para publicar</div>
+      <div class="subtitle" id="subtitle">Drafts ready to publish</div>
     </div>
-    <button class="reload-btn" id="reloadBtn">↻ Recargar</button>
+    <div class="header-actions">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button class="lang-btn" data-lang="es">ES</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="th">ไทย</button>
+      </div>
+      <button class="reload-btn" id="reloadBtn">↻</button>
+    </div>
   </header>
 
   <div class="controls">
-    <select id="keywordFilter" aria-label="Filtrar por keyword">
-      <option value="">Todas las keywords</option>
+    <select id="keywordFilter" aria-label="Keyword filter">
+      <option value="">…</option>
     </select>
-    <select id="statusFilter" aria-label="Filtrar por estado">
-      <option value="pending">Solo pendientes</option>
-      <option value="all">Todos</option>
-      <option value="published">Solo publicados</option>
+    <select id="statusFilter" aria-label="Status filter">
+      <option value="pending">…</option>
+      <option value="all">…</option>
+      <option value="published">…</option>
     </select>
     <span class="stats" id="stats">…</span>
   </div>
 
   <div id="content">
-    <div class="loading">
-      <div class="spinner"></div>
-      Leyendo borradores del Sheet…
-    </div>
+    <div class="loading"><div class="spinner"></div><span id="loadingText">Loading drafts…</span></div>
   </div>
 
-  <a class="footer-link" href="https://docs.google.com/spreadsheets/d/1EtoZTnP9P_NLMm_LuKyxYmMDXgvUHZTISRJvGtgc1rU" target="_blank" rel="noopener">
-    Abrir Sheet completo ↗
-  </a>
+  <a class="footer-link" id="openSheetLink" href="https://docs.google.com/spreadsheets/d/1EtoZTnP9P_NLMm_LuKyxYmMDXgvUHZTISRJvGtgc1rU" target="_blank" rel="noopener">Open full Sheet ↗</a>
 </div>
 
-<div class="toast" id="toast">Copiado</div>
+<div class="toast" id="toast">Copied</div>
 
 <script>
 const SPREADSHEET_ID = '1EtoZTnP9P_NLMm_LuKyxYmMDXgvUHZTISRJvGtgc1rU';
 const SHEET_NAME = 'Borradores';
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 const STORAGE_KEY = 'platinum_published_v1';
+const LANG_KEY = 'platinum_lang_v1';
+
+const I18N = {
+  es: {
+    subtitle: "Borradores listos para publicar", reload: "Recargar", allKeywords: "Todas las keywords",
+    pendingOnly: "Solo pendientes", allStatus: "Todos", publishedOnly: "Solo publicados",
+    briefSection: "Brief para ChatGPT + Canva", seeMore: "Ver más", seeLess: "Ver menos",
+    copyBrief: "📋 Copiar BRIEF completo", copyCaption: "Copiar caption", copyHashtags: "Copiar hashtags",
+    markPublished: "○ Marcar como publicado", isPublished: "✓ Marcado como publicado",
+    noMatch: "No hay borradores que coincidan con el filtro.", loading: "Leyendo borradores del Sheet…",
+    briefCopied: "Brief copiado", captionCopied: "Caption + hashtags copiados", hashtagsCopied: "Hashtags copiados",
+    nothingToCopy: "Vacío, nada que copiar", copyError: "Error al copiar",
+    errorTitle: "No se pudo leer el Sheet",
+    errorFix: "Solución: abre el Sheet, pulsa Compartir arriba a la derecha, cambia Acceso general a \"Cualquiera con el enlace\" (rol: Lector). Luego recarga esta página.",
+    openSheet: "Abrir Sheet completo ↗",
+    httpError: "HTTP {status}. ¿Está el Sheet compartido como \"Cualquiera con el enlace\"?",
+    htmlInsteadCsv: "Google devolvió HTML en lugar de CSV. Probablemente el Sheet no está público.",
+  },
+  en: {
+    subtitle: "Drafts ready to publish", reload: "Reload", allKeywords: "All keywords",
+    pendingOnly: "Pending only", allStatus: "All", publishedOnly: "Published only",
+    briefSection: "Brief for ChatGPT + Canva", seeMore: "See more", seeLess: "See less",
+    copyBrief: "📋 Copy full BRIEF", copyCaption: "Copy caption", copyHashtags: "Copy hashtags",
+    markPublished: "○ Mark as published", isPublished: "✓ Marked as published",
+    noMatch: "No drafts match the filter.", loading: "Reading drafts from the Sheet…",
+    briefCopied: "Brief copied", captionCopied: "Caption + hashtags copied", hashtagsCopied: "Hashtags copied",
+    nothingToCopy: "Empty, nothing to copy", copyError: "Copy error",
+    errorTitle: "Couldn't read the Sheet",
+    errorFix: "Fix: open the Sheet, click Share at the top right, change General access to \"Anyone with the link\" (role: Viewer). Then reload this page.",
+    openSheet: "Open full Sheet ↗",
+    httpError: "HTTP {status}. Is the Sheet shared as \"Anyone with the link\"?",
+    htmlInsteadCsv: "Google returned HTML instead of CSV. The Sheet is probably not public.",
+  },
+  th: {
+    subtitle: "ฉบับร่างพร้อมเผยแพร่", reload: "รีโหลด", allKeywords: "คีย์เวิร์ดทั้งหมด",
+    pendingOnly: "เฉพาะที่รอ", allStatus: "ทั้งหมด", publishedOnly: "เฉพาะที่เผยแพร่แล้ว",
+    briefSection: "บรีฟสำหรับ ChatGPT + Canva", seeMore: "ดูเพิ่ม", seeLess: "ดูน้อยลง",
+    copyBrief: "📋 คัดลอกบรีฟทั้งหมด", copyCaption: "คัดลอกแคปชั่น", copyHashtags: "คัดลอกแฮชแท็ก",
+    markPublished: "○ ทำเครื่องหมายว่าเผยแพร่", isPublished: "✓ ทำเครื่องหมายแล้ว",
+    noMatch: "ไม่พบฉบับร่างที่ตรงกับตัวกรอง", loading: "กำลังอ่านฉบับร่างจาก Sheet…",
+    briefCopied: "คัดลอกบรีฟแล้ว", captionCopied: "คัดลอกแคปชั่น + แฮชแท็กแล้ว", hashtagsCopied: "คัดลอกแฮชแท็กแล้ว",
+    nothingToCopy: "ว่างเปล่า ไม่มีอะไรให้คัดลอก", copyError: "ข้อผิดพลาดในการคัดลอก",
+    errorTitle: "ไม่สามารถอ่าน Sheet ได้",
+    errorFix: "วิธีแก้: เปิด Sheet กดปุ่ม Share มุมบนขวา เปลี่ยน General access เป็น \"Anyone with the link\" (สิทธิ์: Viewer) จากนั้นรีโหลดหน้านี้",
+    openSheet: "เปิด Sheet ทั้งหมด ↗",
+    httpError: "HTTP {status}. Sheet ถูกแชร์เป็น \"Anyone with the link\" หรือไม่?",
+    htmlInsteadCsv: "Google ส่ง HTML กลับมาแทน CSV — Sheet อาจไม่ได้เผยแพร่",
+  },
+};
+
+let currentLang = localStorage.getItem(LANG_KEY) || 'en';
+function t(key) { return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key; }
 
 let allRows = [];
 let publishedSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
 
 function parseCSV(text) {
   const rows = [];
-  let row = [];
-  let field = '';
-  let inQuotes = false;
-  let i = 0;
+  let row = [], field = '', inQuotes = false, i = 0;
   while (i < text.length) {
     const c = text[i];
     if (inQuotes) {
-      if (c === '"') {
-        if (text[i + 1] === '"') { field += '"'; i += 2; continue; }
-        inQuotes = false; i++;
-      } else { field += c; i++; }
+      if (c === '"') { if (text[i + 1] === '"') { field += '"'; i += 2; continue; } inQuotes = false; i++; }
+      else { field += c; i++; }
     } else {
       if (c === '"') { inQuotes = true; i++; }
       else if (c === ',') { row.push(field); field = ''; i++; }
       else if (c === '\r') { i++; }
-      else if (c === '\n') {
-        row.push(field); rows.push(row);
-        row = []; field = ''; i++;
-      } else { field += c; i++; }
+      else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; i++; }
+      else { field += c; i++; }
     }
   }
   if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
@@ -139,12 +192,24 @@ function rowsToObjects(rows) {
 
 function extractFromBrief(brief) {
   let caption = '';
-  const captionMatch = brief.match(/CAPTION LISTO PARA COPIAR[^:]*:\s*([\s\S]*?)(?=HASHTAGS|━|$)/);
+  const captionMatch = brief.match(/CAPTION[^:]*:\s*([\s\S]*?)(?=HASHTAGS|━|$)/i);
   if (captionMatch) caption = captionMatch[1].trim();
   let hashtags = '';
-  const hashMatch = brief.match(/HASHTAGS[^:]*:\s*([\s\S]*?)(?=━|ADJUNTO|$)/);
+  const hashMatch = brief.match(/HASHTAGS[^:]*:\s*([\s\S]*?)(?=━|ADJUNTO|ATTACHED|$)/i);
   if (hashMatch) hashtags = hashMatch[1].trim();
   return { caption, hashtags };
+}
+
+function pickBrief(row) {
+  if (currentLang === 'es' && row.brief_es) return row.brief_es;
+  if (currentLang === 'en' && row.brief_en) return row.brief_en;
+  if (currentLang === 'th' && row.brief_th) return row.brief_th;
+  return row.brief;
+}
+
+function pickCaption(row) {
+  if (currentLang === 'th') return row.ig_caption_th || row.ig_caption_en;
+  return row.ig_caption_en || row.ig_caption_th;
 }
 
 function showToast(msg) {
@@ -153,39 +218,26 @@ function showToast(msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 1600);
 }
-
 function copyText(text, label) {
-  if (!text) { showToast('Vacío, nada que copiar'); return; }
+  if (!text) { showToast(t('nothingToCopy')); return; }
   if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text)
-      .then(() => showToast('✓ ' + (label || 'Copiado')))
-      .catch(() => fallbackCopy(text, label));
-  } else {
-    fallbackCopy(text, label);
-  }
+    navigator.clipboard.writeText(text).then(() => showToast('✓ ' + label)).catch(() => fallbackCopy(text, label));
+  } else { fallbackCopy(text, label); }
 }
 function fallbackCopy(text, label) {
   const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed'; ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand('copy'); showToast('✓ ' + (label || 'Copiado')); }
-  catch { showToast('Error al copiar'); }
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); showToast('✓ ' + label); }
+  catch { showToast(t('copyError')); }
   document.body.removeChild(ta);
 }
-
 function togglePublished(id) {
-  if (publishedSet.has(id)) publishedSet.delete(id);
-  else publishedSet.add(id);
+  if (publishedSet.has(id)) publishedSet.delete(id); else publishedSet.add(id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify([...publishedSet]));
   render();
 }
-
-function isPublished(row) {
-  return publishedSet.has(row.id) || row.status === 'Publicado';
-}
-
+function isPublished(row) { return publishedSet.has(row.id) || row.status === 'Publicado'; }
 function escapeHtml(s) {
   if (!s) return '';
   return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
@@ -194,9 +246,12 @@ function escapeHtml(s) {
 function renderCard(row) {
   const card = document.createElement('div');
   card.className = 'card' + (isPublished(row) ? ' published' : '');
-
-  const { caption, hashtags } = extractFromBrief(row.brief);
-  const captionPlusHashtags = caption + (hashtags ? '\n\n' + hashtags : '');
+  const brief = pickBrief(row);
+  const { caption, hashtags } = extractFromBrief(brief);
+  const langCaption = pickCaption(row);
+  const finalCaption = caption || langCaption || '';
+  const captionPlusHashtags = finalCaption + (hashtags ? '\n\n' + hashtags : (row.hashtags ? '\n\n' + row.hashtags : ''));
+  const finalHashtags = hashtags || row.hashtags || '';
 
   card.innerHTML = `
     <div class="card-head">
@@ -207,27 +262,25 @@ function renderCard(row) {
       <div class="date">${escapeHtml(row.fecha)}</div>
     </div>
     ${row.slogan_en ? `<div class="slogan">"${escapeHtml(row.slogan_en)}"</div>` : ''}
-    <div class="section-title">Brief para ChatGPT + Canva</div>
-    <div class="brief-preview">${escapeHtml(row.brief)}</div>
-    <button class="toggle-expand">Ver más</button>
+    <div class="section-title">${escapeHtml(t('briefSection'))}</div>
+    <div class="brief-preview">${escapeHtml(brief)}</div>
+    <button class="toggle-expand">${escapeHtml(t('seeMore'))}</button>
     <div class="actions">
-      <button class="btn-primary" data-a="brief">📋 Copiar BRIEF completo</button>
-      <button class="btn-secondary" data-a="caption">Copiar caption</button>
-      <button class="btn-secondary" data-a="hashtags">Copiar hashtags</button>
-      <button class="btn-publish" data-a="publish">
-        ${isPublished(row) ? '✓ Marcado como publicado' : '○ Marcar como publicado'}
-      </button>
+      <button class="btn-primary" data-a="brief">${escapeHtml(t('copyBrief'))}</button>
+      <button class="btn-secondary" data-a="caption">${escapeHtml(t('copyCaption'))}</button>
+      <button class="btn-secondary" data-a="hashtags">${escapeHtml(t('copyHashtags'))}</button>
+      <button class="btn-publish" data-a="publish">${escapeHtml(isPublished(row) ? t('isPublished') : t('markPublished'))}</button>
     </div>
   `;
 
   card.querySelector('.toggle-expand').onclick = (e) => {
     const p = card.querySelector('.brief-preview');
     const exp = p.classList.toggle('expanded');
-    e.target.textContent = exp ? 'Ver menos' : 'Ver más';
+    e.target.textContent = exp ? t('seeLess') : t('seeMore');
   };
-  card.querySelector('[data-a="brief"]').onclick = () => copyText(row.brief, 'Brief copiado');
-  card.querySelector('[data-a="caption"]').onclick = () => copyText(captionPlusHashtags || row.ig_caption_en, 'Caption + hashtags copiados');
-  card.querySelector('[data-a="hashtags"]').onclick = () => copyText(hashtags || row.hashtags, 'Hashtags copiados');
+  card.querySelector('[data-a="brief"]').onclick = () => copyText(brief, t('briefCopied'));
+  card.querySelector('[data-a="caption"]').onclick = () => copyText(captionPlusHashtags, t('captionCopied'));
+  card.querySelector('[data-a="hashtags"]').onclick = () => copyText(finalHashtags, t('hashtagsCopied'));
   card.querySelector('[data-a="publish"]').onclick = () => togglePublished(row.id);
   return card;
 }
@@ -238,26 +291,40 @@ function parseDate(s) {
   return new Date(+m[3], +m[2] - 1, +m[1], +(m[4]||0), +(m[5]||0)).getTime();
 }
 
+function applyStaticTexts() {
+  document.documentElement.lang = currentLang;
+  document.getElementById('subtitle').textContent = t('subtitle');
+  document.getElementById('reloadBtn').textContent = '↻ ' + t('reload');
+  document.getElementById('loadingText').textContent = t('loading');
+  document.getElementById('openSheetLink').textContent = t('openSheet');
+  const kwSel = document.getElementById('keywordFilter');
+  if (kwSel.options.length > 0) kwSel.options[0].textContent = t('allKeywords');
+  const stSel = document.getElementById('statusFilter');
+  stSel.options[0].textContent = t('pendingOnly');
+  stSel.options[1].textContent = t('allStatus');
+  stSel.options[2].textContent = t('publishedOnly');
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === currentLang);
+  });
+}
+
 function render() {
+  applyStaticTexts();
   const kwFilter = document.getElementById('keywordFilter').value;
   const stFilter = document.getElementById('statusFilter').value;
-
   let filtered = allRows.slice();
   if (kwFilter) filtered = filtered.filter(r => r.keyword_en === kwFilter);
   if (stFilter === 'pending') filtered = filtered.filter(r => !isPublished(r));
   else if (stFilter === 'published') filtered = filtered.filter(r => isPublished(r));
-
   filtered.sort((a, b) => parseDate(b.fecha) - parseDate(a.fecha));
-
   const totalPending = allRows.filter(r => !isPublished(r)).length;
   const totalDone = allRows.length - totalPending;
   document.getElementById('stats').innerHTML =
     `<span class="badge-pending">${totalPending}</span><span class="badge-done">${totalDone}</span>`;
-
   const content = document.getElementById('content');
   content.innerHTML = '';
   if (filtered.length === 0) {
-    content.innerHTML = '<div class="empty">No hay borradores que coincidan con el filtro.</div>';
+    content.innerHTML = `<div class="empty">${escapeHtml(t('noMatch'))}</div>`;
     return;
   }
   const grid = document.createElement('div');
@@ -278,47 +345,48 @@ function populateKeywordFilter() {
 }
 
 async function load() {
-  document.getElementById('content').innerHTML = '<div class="loading"><div class="spinner"></div>Leyendo borradores del Sheet…</div>';
+  document.getElementById('content').innerHTML = `<div class="loading"><div class="spinner"></div><span>${escapeHtml(t('loading'))}</span></div>`;
   try {
     const resp = await fetch(CSV_URL + '&t=' + Date.now(), { redirect: 'follow' });
-    if (!resp.ok) {
-      throw new Error(`HTTP ${resp.status}. ¿Está el Sheet compartido como "Cualquiera con el enlace"?`);
-    }
+    if (!resp.ok) throw new Error(t('httpError').replace('{status}', resp.status));
     const text = await resp.text();
-    if (text.trim().startsWith('<') || text.includes('<HTML>')) {
-      throw new Error('Google devolvió HTML en lugar de CSV. Probablemente el Sheet no está público. Abre el Sheet → Compartir → cambia el acceso a "Cualquiera con el enlace".');
-    }
+    if (text.trim().startsWith('<') || text.includes('<HTML>')) throw new Error(t('htmlInsteadCsv'));
     const rows = parseCSV(text);
     const objs = rowsToObjects(rows);
     allRows = objs.map(o => ({
       id: (o.fecha || '') + '|' + (o.keyword_en || ''),
       fecha: o.fecha || '',
-      keyword_th: o.keyword_th || '',
-      keyword_en: o.keyword_en || '',
-      slogan_th: o.slogan_th || '',
-      slogan_en: o.slogan_en || '',
-      fb_post_en: o.fb_post_en || '',
-      ig_caption_en: o.ig_caption_en || '',
-      hashtags: o.hashtags || '',
-      image_concept: o.image_concept || '',
-      imagen_url: o.imagen_url || '',
-      status: o.status || '',
+      keyword_th: o.keyword_th || '', keyword_en: o.keyword_en || '',
+      slogan_th: o.slogan_th || '', slogan_en: o.slogan_en || '',
+      fb_post_en: o.fb_post_en || '', fb_post_th: o.fb_post_th || '',
+      ig_caption_en: o.ig_caption_en || '', ig_caption_th: o.ig_caption_th || '',
+      hashtags: o.hashtags || '', image_concept: o.image_concept || '',
+      imagen_url: o.imagen_url || '', status: o.status || '',
       brief: o.brief_chatgpt || '',
+      brief_es: o.brief_chatgpt_es || '',
+      brief_en: o.brief_chatgpt_en || '',
+      brief_th: o.brief_chatgpt_th || '',
     })).filter(r => r.fecha && r.brief);
-
     populateKeywordFilter();
     render();
   } catch (err) {
     document.getElementById('content').innerHTML =
-      `<div class="error"><b>No se pudo leer el Sheet</b><br><br>${escapeHtml(err.message || String(err))}<br><br>
-      <b>Solución:</b> abre el Sheet, pulsa <code>Compartir</code> arriba a la derecha, en "Acceso general" cambia de "Restringido" a <code>Cualquiera con el enlace</code> (rol: Lector). Luego recarga esta página.</div>`;
+      `<div class="error"><b>${escapeHtml(t('errorTitle'))}</b><br><br>${escapeHtml(err.message || String(err))}<br><br><b>${escapeHtml(t('errorFix'))}</b></div>`;
   }
 }
 
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.onclick = () => {
+    currentLang = btn.dataset.lang;
+    localStorage.setItem(LANG_KEY, currentLang);
+    render();
+  };
+});
 document.getElementById('keywordFilter').onchange = render;
 document.getElementById('statusFilter').onchange = render;
 document.getElementById('reloadBtn').onclick = load;
 
+applyStaticTexts();
 load();
 </script>
 </body>
